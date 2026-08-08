@@ -652,3 +652,74 @@ body {
     }
 
 }
+/* =================================
+   FIX SEMUA GAMBAR PRODUK
+================================= */
+
+/* Gambar di kartu produk */
+.product-card img,
+.product-image {
+    width: 100% !important;
+    height: 220px !important;
+    max-height: 220px !important;
+    object-fit: contain !important;
+    display: block !important;
+    background: #f5f5f5;
+}
+
+/* Gambar halaman detail */
+.detail-image {
+    width: 100% !important;
+    max-width: 400px !important;
+    height: 400px !important;
+    max-height: 400px !important;
+    object-fit: contain !important;
+    display: block !important;
+    margin: auto !important;
+    background: #f5f5f5;
+}
+
+/* Gambar keranjang */
+.cart-item img {
+    width: 75px !important;
+    height: 90px !important;
+    max-width: 75px !important;
+    max-height: 90px !important;
+    object-fit: contain !important;
+    flex-shrink: 0;
+    background: #f5f5f5;
+}
+
+/* Gambar invoice */
+.invoice-item img {
+    width: 60px !important;
+    height: 70px !important;
+    max-width: 60px !important;
+    max-height: 70px !important;
+    object-fit: contain !important;
+}
+
+/* HP */
+@media (max-width: 768px) {
+
+    .product-card img,
+    .product-image {
+        height: 180px !important;
+        max-height: 180px !important;
+    }
+
+    .detail-image {
+        width: 100% !important;
+        max-width: 300px !important;
+        height: 330px !important;
+        max-height: 330px !important;
+    }
+
+    .cart-item img {
+        width: 65px !important;
+        height: 80px !important;
+        max-width: 65px !important;
+        max-height: 80px !important;
+    }
+
+}
