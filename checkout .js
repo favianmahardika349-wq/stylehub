@@ -411,7 +411,7 @@ function createOrder(event) {
     // PINDAH KE INVOICE
     // ======================================
 
-    window.location.href = "invoice.html";
+    window.location.href ="invoice.html";
 
 }
 
