@@ -1,725 +1,632 @@
+/* ==================================================
+   STYLEHUB - CLEAN FASHION MARKETPLACE
+   ================================================== */
+
 * {
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
 
 body {
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    background: #f8f9fa;
-
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f6f6f6;
     color: #111;
+}
 
+img {
+    max-width: 100%;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
 }
 
 
-/* ==========================
-   BRAND
-========================== */
+/* ==================================================
+   NAVBAR
+   ================================================== */
+
+.navbar {
+    background: #fff !important;
+    border-bottom: 1px solid #eee;
+}
+
+.navbar-brand {
+    font-weight: 800;
+    letter-spacing: -1px;
+}
 
 .navbar-brand span {
-
-    color: #777;
-
+    color: #888;
 }
 
 
-/* ==========================
+/* ==================================================
    HERO
-========================== */
+   ================================================== */
 
 .hero {
-
-    min-height: 520px;
-
+    min-height: 480px;
     display: flex;
-
     align-items: center;
-
-    background:
-        linear-gradient(
-            135deg,
-            #eeeeee,
-            #ffffff
-        );
-
-    padding: 70px 0;
-
+    padding: 60px 0;
+    background: linear-gradient(135deg, #e9e9e9, #fff);
 }
-
 
 .hero h1 {
-
-    font-size:
-        clamp(
-            45px,
-            7vw,
-            80px
-        );
-
+    font-size: clamp(45px, 7vw, 80px);
     font-weight: 800;
-
     line-height: .95;
-
     letter-spacing: -4px;
-
 }
-
 
 .hero p {
-
-    font-size: 18px;
-
-    color: #666;
-
     max-width: 500px;
-
+    color: #666;
+    font-size: 18px;
 }
-
 
 .hero-fashion {
-
-    font-size: 200px;
-
-    transform:
-        rotate(-10deg);
-
+    font-size: 160px;
+    transform: rotate(-10deg);
 }
 
 
-/* ==========================
+/* ==================================================
    PROMO
-========================== */
+   ================================================== */
 
 .promo {
-
     background: #111;
-
-    color: white;
-
+    color: #fff;
     border-radius: 20px;
-
-    padding: 40px;
-
+    padding: 35px;
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
-
 }
 
 
-/* ==========================
+/* ==================================================
    CATEGORY
-========================== */
+   ================================================== */
 
 .category-card {
-
-    background: white;
-
-    color: #111;
-
-    text-decoration: none;
-
-    text-align: center;
-
     display: block;
-
-    padding: 30px 15px;
-
+    padding: 25px 15px;
+    background: #fff;
+    color: #111;
+    text-align: center;
     border-radius: 15px;
-
-    box-shadow:
-        0 5px 20px
-        rgba(0,0,0,.05);
-
+    box-shadow: 0 4px 15px rgba(0,0,0,.05);
     transition: .2s;
-
 }
-
 
 .category-card:hover {
-
-    transform:
-        translateY(-5px);
-
+    transform: translateY(-4px);
 }
-
 
 .category-icon {
-
-    font-size: 45px;
-
-    margin-bottom: 10px;
-
+    font-size: 40px;
+    margin-bottom: 8px;
 }
 
 
-/* ==========================
-   PRODUCT
-========================== */
+/* ==================================================
+   PRODUCT CARD
+   ================================================== */
 
 .product-card {
-
-    background: white;
-
-    border-radius: 15px;
-
-    overflow: hidden;
-
     height: 100%;
-
-    box-shadow:
-        0 5px 20px
-        rgba(0,0,0,.05);
-
+    overflow: hidden;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.05);
     transition: .2s;
-
 }
-
 
 .product-card:hover {
-
-    transform:
-        translateY(-5px);
-
-    box-shadow:
-        0 10px 30px
-        rgba(0,0,0,.1);
-
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,.1);
 }
 
+
+/* SEMUA GAMBAR PRODUK DI KATALOG */
+
+.product-card img,
 .product-image {
-    width: 100%;
-    height: 280px;
-    object-fit: cover;
-    display: block;
+    display: block !important;
+    width: 100% !important;
+    height: 200px !important;
+    max-width: 100% !important;
+    max-height: 200px !important;
+    object-fit: contain !important;
+    background: #f3f3f3;
 }
 
-}
 
+/* Isi card */
 
 .product-body {
-
-    padding: 20px;
-
+    padding: 16px;
 }
 
+.product-body h5 {
+    margin-bottom: 5px;
+    font-size: 17px;
+}
 
 .rating {
-
     color: #f59e0b;
-
+    font-size: 14px;
 }
 
 
-/* ==========================
+/* ==================================================
    FILTER
-========================== */
+   ================================================== */
 
 .filter-box {
-
-    background: white;
-
-    padding: 25px;
-
+    background: #fff;
+    padding: 20px;
     border-radius: 15px;
-
-    box-shadow:
-        0 5px 20px
-        rgba(0,0,0,.05);
-
+    box-shadow: 0 4px 15px rgba(0,0,0,.05);
 }
 
 
-/* ==========================
-   DETAIL
-========================== */
+/* ==================================================
+   DETAIL PRODUK
+   ================================================== */
 
 .detail-image {
-    width: 100%;
-    max-width: 450px;
-    height: 500px;
-    object-fit: contain;
-    background: #f5f5f5;
-    border-radius: 20px;
-    display: block;
-    margin: auto;
-}
+    display: block !important;
+
+    width: 350px !important;
+    height: 400px !important;
+
+    max-width: 100% !important;
+    max-height: 400px !important;
+
+    margin: 0 auto;
+
+    object-fit: contain !important;
+
+    background: #f3f3f3;
+
+    border-radius: 18px;
 }
 
 
-/* ==========================
+/* ==================================================
    CART
-========================== */
+   ================================================== */
 
 .cart-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 
-    background: white;
+    background: #fff;
+
+    padding: 15px;
+
+    margin-bottom: 12px;
 
     border-radius: 15px;
 
-    padding: 20px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 20px;
-
-    margin-bottom: 15px;
-
+    box-shadow: 0 4px 15px rgba(0,0,0,.04);
 }
 
 
+/* GAMBAR CART KECIL */
 
+.cart-item img {
+    display: block !important;
 
-}
+    width: 70px !important;
+    height: 80px !important;
 
+    max-width: 70px !important;
+    max-height: 80px !important;
 
-.cart-info {
+    flex: 0 0 70px;
 
-    flex: 1;
+    object-fit: contain !important;
 
-}
-
-
-.quantity-control {
-
-    display: inline-flex;
-
-    border:
-        1px solid #ddd;
+    background: #f3f3f3;
 
     border-radius: 8px;
+}
+
+.cart-info {
+    flex: 1;
+    min-width: 0;
+}
+
+
+/* ==================================================
+   QUANTITY
+   ================================================== */
+
+.quantity-control {
+    display: inline-flex;
+    align-items: center;
 
     overflow: hidden;
 
+    border: 1px solid #ddd;
+    border-radius: 8px;
 }
 
-
 .quantity-control button {
+    width: 32px;
+    height: 32px;
 
     border: none;
 
-    backgr
-    
-    .cart-item img {
-    width: 75px;
-    height: 90px;
-    object-fit: contain;
-    }ound: 
-        
-        #eee;
-
-    width: 35px;
-
-    height: 35px;
-
+    background: #eee;
 }
-
 
 .quantity-control span {
-
-    width: 40px;
+    width: 35px;
 
     display: flex;
-
     justify-content: center;
-
     align-items: center;
-
 }
 
 
-/* ==========================
+/* ==================================================
    SUMMARY
-========================== */
+   ================================================== */
 
 .summary-card {
+    background: #fff;
 
-    background: white;
+    padding: 22px;
 
     border-radius: 15px;
 
-    padding: 25px;
-
-    box-shadow:
-        0 5px 20px
-        rgba(0,0,0,.05);
-
+    box-shadow: 0 4px 15px rgba(0,0,0,.05);
 }
 
 
-/* ==========================
+/* ==================================================
    EMPTY CART
-========================== */
+   ================================================== */
 
 .empty-cart {
-
-    background: white;
+    background: #fff;
 
     text-align: center;
 
-    padding: 100px 20px;
+    padding: 80px 20px;
 
     border-radius: 20px;
-
 }
 
 
-/* ==========================
+/* ==================================================
    AUTH
-========================== */
+   ================================================== */
 
 .auth-page {
-
     min-height: 100vh;
 
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
-    background:
-        linear-gradient(
-            135deg,
-            #eeeeee,
-            #ffffff
-        );
-
+    background: linear-gradient(
+        135deg,
+        #eee,
+        #fff
+    );
 }
-
 
 .auth-container {
-
     width: 100%;
-
     max-width: 450px;
-
     padding: 20px;
-
 }
 
-
 .auth-card {
+    background: #fff;
 
-    background: white;
+    padding: 35px;
 
     border-radius: 20px;
 
-    padding: 40px;
-
-    box-shadow:
-        0 10px 40px
-        rgba(0,0,0,.08);
-
+    box-shadow: 0 10px 40px rgba(0,0,0,.08);
 }
 
-
 .brand-auth {
-
     color: #111;
 
     font-size: 30px;
 
     font-weight: 800;
-
-    text-decoration: none;
-
 }
 
 
-/* ==========================
+/* ==================================================
    CHECKOUT
-========================== */
+   ================================================== */
 
 .checkout-card {
+    background: #fff;
 
-    background: white;
-
-    padding: 30px;
+    padding: 25px;
 
     border-radius: 15px;
 
-    box-shadow:
-        0 5px 20px
-        rgba(0,0,0,.05);
-
+    box-shadow: 0 4px 15px rgba(0,0,0,.05);
 }
 
 
-/* ==========================
+/* ==================================================
+   CHECKOUT ITEM
+   ================================================== */
+
+#checkoutItems img {
+    width: 60px !important;
+    height: 70px !important;
+
+    max-width: 60px !important;
+    max-height: 70px !important;
+
+    object-fit: contain !important;
+}
+
+
+/* ==================================================
    INVOICE
-========================== */
+   ================================================== */
 
 .invoice-card {
-
+    width: 100%;
     max-width: 800px;
 
     margin: auto;
 
-    background: white;
+    background: #fff;
 
-    padding: 50px;
+    padding: 35px;
 
     border-radius: 20px;
 
-    box-shadow:
-        0 10px 40px
-        rgba(0,0,0,.08);
-
+    box-shadow: 0 8px 35px rgba(0,0,0,.08);
 }
 
-
 .success-icon {
+    width: 65px;
+    height: 65px;
 
-    width: 70px;
+    margin: 0 auto 18px;
 
-    height: 70px;
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
 
     background: #198754;
 
-    color: white;
+    color: #fff;
 
     border-radius: 50%;
 
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 40px;
-
-    margin:
-        0 auto 20px;
-
+    font-size: 35px;
 }
 
+
+/* GAMBAR INVOICE */
 
 .invoice-item {
-
     display: flex;
 
     align-items: center;
 
-    gap: 15px;
+    gap: 12px;
 
-    padding: 15px 0;
+    padding: 12px 0;
 
+    border-bottom: 1px solid #eee;
 }
-
 
 .invoice-item img {
+    display: block !important;
 
-    width: 70px;
+    width: 55px !important;
+    height: 65px !important;
 
-    height: 80px;
+    max-width: 55px !important;
+    max-height: 65px !important;
 
-    object-fit: cover;
+    object-fit: contain !important;
 
-    border-radius: 8px;
+    background: #f3f3f3;
 
+    border-radius: 7px;
+
+    flex-shrink: 0;
 }
 
 
-/* ==========================
+/* ==================================================
    FOOTER
-========================== */
+   ================================================== */
 
 .footer {
+    margin-top: 60px;
+
+    padding: 45px 0;
 
     background: #111;
 
-    color: white;
-
-    padding: 50px 0;
-
-    margin-top: 60px;
-
+    color: #fff;
 }
 
 
-/* ==========================
+/* ==================================================
    MOBILE
-========================== */
+   ================================================== */
 
 @media (max-width: 768px) {
 
     .hero {
+        min-height: auto;
 
         text-align: center;
 
+        padding: 45px 20px;
     }
-
 
     .hero h1 {
-
+        font-size: 48px;
         letter-spacing: -2px;
-
     }
 
-
     .hero-fashion {
+        font-size: 100px;
 
-        font-size: 130px;
-
-        margin-top: 40px;
-
+        margin-top: 30px;
     }
 
 
     .promo {
-
         flex-direction: column;
 
         align-items: flex-start;
 
-        gap: 20px;
-
-    }
-
-
-    .cart-item {
-
-        flex-wrap: wrap;
-
-    }
-
-
-    .cart-item img {
-
-        width: 80px;
-
-        height: 100px;
-
-    }
-
-
-    .invoice-card {
+        gap: 15px;
 
         padding: 25px;
+    }
 
+
+    /* KATALOG HP */
+
+    .product-card img,
+    .product-image {
+        width: 100% !important;
+
+        height: 160px !important;
+
+        max-height: 160px !important;
+
+        object-fit: contain !important;
+    }
+
+
+    /* DETAIL HP */
+
+    .detail-image {
+        width: 280px !important;
+
+        height: 320px !important;
+
+        max-width: 280px !important;
+
+        max-height: 320px !important;
+
+        object-fit: contain !important;
+    }
+
+
+    /* CART HP */
+
+    .cart-item {
+        padding: 12px;
+
+        gap: 10px;
+    }
+
+    .cart-item img {
+        width: 60px !important;
+
+        height: 70px !important;
+
+        max-width: 60px !important;
+
+        max-height: 70px !important;
+
+        flex: 0 0 60px;
+    }
+
+
+    /* INVOICE HP */
+
+    .invoice-card {
+        padding: 20px;
+    }
+
+    .invoice-item img {
+        width: 50px !important;
+
+        height: 60px !important;
+
+        max-width: 50px !important;
+
+        max-height: 60px !important;
     }
 
 }
 
 
-/* ==========================
+/* ==================================================
+   EXTRA SMALL PHONE
+   ================================================== */
+
+@media (max-width: 400px) {
+
+    .product-card img,
+    .product-image {
+        height: 140px !important;
+
+        max-height: 140px !important;
+    }
+
+    .detail-image {
+        width: 240px !important;
+
+        height: 280px !important;
+
+        max-width: 240px !important;
+
+        max-height: 280px !important;
+    }
+
+}
+
+
+/* ==================================================
    PRINT INVOICE
-========================== */
+   ================================================== */
 
 @media print {
 
     body {
-
-        background: white;
-
+        background: #fff;
     }
 
-
-    .btn {
-
-        display: none;
-
+    .btn,
+    .navbar,
+    .footer {
+        display: none !important;
     }
-
 
     .invoice-card {
+        max-width: 100%;
 
         box-shadow: none;
 
-    }
-
-}
-
-}
-@media (max-width: 768px) {
-
-    .product-image,
-    .product-card > img {
-        width: 100%;
-        height: 220px;
-        object-fit: cover;
-        display: block;
-    }
-
-}
-/* =================================
-   FIX SEMUA GAMBAR PRODUK
-================================= */
-
-/* Gambar di kartu produk */
-.product-card img,
-.product-image {
-    width: 100% !important;
-    height: 220px !important;
-    max-height: 220px !important;
-    object-fit: contain !important;
-    display: block !important;
-    background: #f5f5f5;
-}
-
-/* Gambar halaman detail */
-.detail-image {
-    width: 100% !important;
-    max-width: 400px !important;
-    height: 400px !important;
-    max-height: 400px !important;
-    object-fit: contain !important;
-    display: block !important;
-    margin: auto !important;
-    background: #f5f5f5;
-}
-
-/* Gambar keranjang */
-.cart-item img {
-    width: 75px !important;
-    height: 90px !important;
-    max-width: 75px !important;
-    max-height: 90px !important;
-    object-fit: contain !important;
-    flex-shrink: 0;
-    background: #f5f5f5;
-}
-
-/* Gambar invoice */
-.invoice-item img {
-    width: 60px !important;
-    height: 70px !important;
-    max-width: 60px !important;
-    max-height: 70px !important;
-    object-fit: contain !important;
-}
-
-/* HP */
-@media (max-width: 768px) {
-
-    .product-card img,
-    .product-image {
-        height: 180px !important;
-        max-height: 180px !important;
-    }
-
-    .detail-image {
-        width: 100% !important;
-        max-width: 300px !important;
-        height: 330px !important;
-        max-height: 330px !important;
-    }
-
-    .cart-item img {
-        width: 65px !important;
-        height: 80px !important;
-        max-width: 65px !important;
-        max-height: 80px !important;
+        padding: 20px;
     }
 
 }
