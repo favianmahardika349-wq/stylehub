@@ -20,92 +20,40 @@
 
     <style>
 
-        /* KHUSUS HALAMAN CART */
-
         #cartContainer .cart-product-image {
-            width: 65px !important;
-            height: 75px !important;
-            min-width: 65px !important;
-            max-width: 65px !important;
-            min-height: 75px !important;
-            max-height: 75px !important;
-
+            width: 70px !important;
+            height: 80px !important;
             object-fit: contain !important;
-
-            display: block !important;
-
-            border-radius: 8px !important;
-
-            background: #f3f3f3 !important;
+            background: #f3f3f3;
+            border-radius: 10px;
+            flex-shrink: 0;
         }
 
-
-        /* Jangan biarkan CSS global membesarkan gambar */
-
-        #cartContainer img {
-            width: 65px !important;
-            height: 75px !important;
-            max-width: 65px !important;
-            max-height: 75px !important;
-
-            object-fit: contain !important;
-        }
-
-
-        /* Tampilan item */
-
-        #cartContainer .cart-product {
-            display: flex;
-
-            align-items: center;
-
-            gap: 15px;
-
+        .cart-product {
             background: white;
-
             padding: 15px;
-
             border-radius: 15px;
-
             margin-bottom: 15px;
-
-            box-shadow:
-                0 4px 15px
-                rgba(0,0,0,.06);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.06);
         }
-
 
         .cart-product-info {
             flex: 1;
         }
 
-
-        /* Mobile */
-
         @media (max-width: 576px) {
 
-            #cartContainer .cart-product {
-                padding: 12px;
-
+            .cart-product {
+                padding: 10px;
                 gap: 10px;
             }
 
-
-            #cartContainer .cart-product-image,
-            #cartContainer img {
-
+            #cartContainer .cart-product-image {
                 width: 55px !important;
-
                 height: 65px !important;
-
-                min-width: 55px !important;
-
-                max-width: 55px !important;
-
-                min-height: 65px !important;
-
-                max-height: 65px !important;
-
             }
 
         }
@@ -129,7 +77,6 @@
             STYLE<span>HUB</span>
 
         </a>
-
 
         <a
             href="products.html"
@@ -159,7 +106,6 @@
 
 
 <script src="cart.js"></script>
-
 
 </body>
 
