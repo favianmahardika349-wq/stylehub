@@ -10,13 +10,110 @@
 
     <title>Keranjang - StyleHub</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
 
-    <link rel="stylesheet"
-          href="css/style.css">
+    <link
+        rel="stylesheet"
+        href="css/style.css">
+
+    <style>
+
+        /* KHUSUS HALAMAN CART */
+
+        #cartContainer .cart-product-image {
+            width: 65px !important;
+            height: 75px !important;
+            min-width: 65px !important;
+            max-width: 65px !important;
+            min-height: 75px !important;
+            max-height: 75px !important;
+
+            object-fit: contain !important;
+
+            display: block !important;
+
+            border-radius: 8px !important;
+
+            background: #f3f3f3 !important;
+        }
+
+
+        /* Jangan biarkan CSS global membesarkan gambar */
+
+        #cartContainer img {
+            width: 65px !important;
+            height: 75px !important;
+            max-width: 65px !important;
+            max-height: 75px !important;
+
+            object-fit: contain !important;
+        }
+
+
+        /* Tampilan item */
+
+        #cartContainer .cart-product {
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+
+            background: white;
+
+            padding: 15px;
+
+            border-radius: 15px;
+
+            margin-bottom: 15px;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0,0,0,.06);
+        }
+
+
+        .cart-product-info {
+            flex: 1;
+        }
+
+
+        /* Mobile */
+
+        @media (max-width: 576px) {
+
+            #cartContainer .cart-product {
+                padding: 12px;
+
+                gap: 10px;
+            }
+
+
+            #cartContainer .cart-product-image,
+            #cartContainer img {
+
+                width: 55px !important;
+
+                height: 65px !important;
+
+                min-width: 55px !important;
+
+                max-width: 55px !important;
+
+                min-height: 65px !important;
+
+                max-height: 65px !important;
+
+            }
+
+        }
+
+    </style>
 
 </head>
+
 
 <body>
 
@@ -25,15 +122,18 @@
 
     <div class="container">
 
-        <a class="navbar-brand fw-bold fs-3"
-           href="index.html">
+        <a
+            class="navbar-brand fw-bold fs-3"
+            href="index.html">
 
             STYLE<span>HUB</span>
 
         </a>
 
-        <a href="products.html"
-           class="btn btn-outline-dark">
+
+        <a
+            href="products.html"
+            class="btn btn-outline-dark">
 
             Belanja Lagi
 
@@ -47,8 +147,11 @@
 <section class="container py-5">
 
     <h1 class="fw-bold mb-4">
+
         Keranjang Saya
+
     </h1>
+
 
     <div id="cartContainer"></div>
 
@@ -57,9 +160,7 @@
 
 <script src="cart.js"></script>
 
-<script>
-    displayCart();
-</script>
 
 </body>
+
 </html>
