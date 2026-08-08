@@ -1,94 +1,245 @@
-const invoiceContainer =
-    document.getElementById("invoice");
+// ==========================================
+// STYLEHUB - INVOICE
+// ==========================================
 
 
-// ===============================
-// AMBIL ORDER
-// ===============================
-
-const order =
-    JSON.parse(
-        localStorage.getItem("lastOrder")
-    );
-
-
-// ===============================
+// ==========================================
 // FORMAT RUPIAH
-// ===============================
+// ==========================================
 
-function rupiah(angka) {
+function formatRupiah(number) {
 
     return new Intl.NumberFormat("id-ID", {
+
         style: "currency",
+
         currency: "IDR",
+
         maximumFractionDigits: 0
-    }).format(angka);
+
+    }).format(Number(number));
 
 }
 
 
-// ===============================
-// CEK ORDER
-// ===============================
+// ==========================================
+// AMBIL DATA ORDER
+// ==========================================
 
-if (!order) {
+function getLastOrder() {
 
-    invoiceContainer.innerHTML = `
+    try {
 
-        <div class="text-center py-5">
+        return JSON.parse(
+            localStorage.getItem("lastOrder")
+        );
 
-            <div style="font-size:70px;">
-                😢
+    } catch (error) {
+
+        return null;
+
+    }
+
+}
+
+
+// ==========================================
+// TAMPILKAN INVOICE
+// ==========================================
+
+function displayInvoice() {
+
+    const container =
+        document.getElementById("invoiceContainer");
+
+
+    if (!container) return;
+
+
+    const order =
+        getLastOrder();
+
+
+    // ======================================
+    // JIKA ORDER TIDAK ADA
+    // ======================================
+
+    if (!order) {
+
+        container.innerHTML = `
+
+            <div class="invoice-card text-center">
+
+                <div class="mb-4"
+                     style="font-size:70px;">
+
+                    📄
+
+                </div>
+
+                <h2 class="fw-bold">
+                    Invoice Tidak Ditemukan
+                </h2>
+
+                <p class="text-secondary">
+
+                    Belum ada pesanan yang dibuat.
+
+                </p>
+
+                <a
+                    href="products.html"
+                    class="btn btn-dark">
+
+                    Kembali Belanja
+
+                </a>
+
             </div>
 
-            <h2 class="fw-bold">
-                Invoice Tidak Ditemukan
-            </h2>
+        `;
 
-            <p class="text-secondary">
-                Belum ada pesanan.
-            </p>
+        return;
 
-            <a
-                href="products.html"
-                class="btn btn-dark">
-
-                Belanja Sekarang
-
-            </a>
-
-        </div>
-
-    `;
-
-}
+    }
 
 
-// ===============================
-// TAMPILKAN INVOICE
-// ===============================
+    // ======================================
+    // DATA ORDER
+    // ======================================
 
-else {
+    const items =
+        Array.isArray(order.items)
+            ? order.items
+            : [];
 
-    invoiceContainer.innerHTML = `
+
+    let itemsHTML = "";
+
+
+    items.forEach(item => {
+
+        const price =
+            Number(item.price) || 0;
+
+
+        const quantity =
+            Number(item.quantity) || 1;
+
+
+        const itemTotal =
+            price * quantity;
+
+
+        itemsHTML += `
+
+            <div class="invoice-product">
+
+                <img
+                    src="${item.image}"
+                    alt="${item.name}">
+
+                <div class="invoice-product-info">
+
+                    <div class="fw-bold">
+                        ${item.name}
+                    </div>
+
+                    <div class="text-secondary small">
+
+                        Ukuran: ${item.size || "-"}
+                        &nbsp; • &nbsp;
+                        Qty: ${quantity}
+
+                    </div>
+
+                    <div class="small mt-1">
+
+                        ${formatRupiah(price)}
+                        / item
+
+                    </div>
+
+                </div>
+
+                <div class="fw-bold invoice-product-price">
+
+                    ${formatRupiah(itemTotal)}
+
+                </div>
+
+            </div>
+
+        `;
+
+    });
+
+
+    // ======================================
+    // PEMBAYARAN
+    // ======================================
+
+    let paymentName =
+        order.payment || "-";
+
+
+    // Biar tampilan lebih enak dibaca
+
+    const paymentNames = {
+
+        cod: "COD",
+
+        transfer: "Transfer Bank",
+
+        qris: "QRIS",
+
+        dana: "DANA",
+
+        ovo: "OVO",
+
+        gopay: "GoPay"
+
+    };
+
+
+    if (paymentNames[paymentName]) {
+
+        paymentName =
+            paymentNames[paymentName];
+
+    }
+
+
+    // ======================================
+    // TAMPILKAN
+    // ======================================
+
+    container.innerHTML = `
 
         <div class="invoice-card">
 
+
             <!-- SUCCESS -->
 
-            <div class="text-center">
+            <div class="text-center mb-4">
 
                 <div class="success-icon">
+
                     ✓
+
                 </div>
 
-                <h1 class="fw-bold">
-                    Pesanan Berhasil!
+                <h1 class="fw-bold mb-2">
+
+                    Pembayaran Berhasil!
+
                 </h1>
 
                 <p class="text-secondary">
-                    Terima kasih telah berbelanja
+
+                    Terima kasih sudah berbelanja
                     di StyleHub.
+
                 </p>
 
             </div>
@@ -97,56 +248,107 @@ else {
             <hr>
 
 
-            <!-- NOMOR PESANAN -->
+            <!-- HEADER INVOICE -->
 
-            <div class="row mb-4">
+            <div class="invoice-header">
 
-                <div class="col-md-6">
+                <div>
 
-                    <small class="text-secondary">
-                        Nomor Pesanan
-                    </small>
+                    <h3 class="fw-bold mb-1">
 
-                    <h5>
-                        ${order.orderId}
-                    </h5>
+                        STYLE<span>HUB</span>
+
+                    </h3>
+
+                    <p class="text-secondary mb-0">
+
+                        Fashion for Everyone
+
+                    </p>
 
                 </div>
 
 
-                <div class="col-md-6">
+                <div class="text-end">
 
-                    <small class="text-secondary">
-                        Tanggal
-                    </small>
+                    <strong>
+                        INVOICE
+                    </strong>
 
-                    <h5>
-                        ${order.date}
-                    </h5>
+                    <div class="small text-secondary">
+
+                        ${order.orderId || "-"}
+
+                    </div>
+
+                    <div class="small text-secondary">
+
+                        ${order.date || "-"}
+
+                    </div>
 
                 </div>
 
             </div>
 
 
-            <!-- ALAMAT -->
-
-            <h5 class="fw-bold">
-                Informasi Pengiriman
-            </h5>
+            <hr>
 
 
-            <p>
-                <strong>
-                    ${order.customer.name}
-                </strong>
-                <br>
+            <!-- CUSTOMER -->
 
-                📱 ${order.customer.phone}
-                <br>
+            <div class="invoice-customer mb-4">
 
-                📍 ${order.customer.address}
-            </p>
+                <h5 class="fw-bold mb-3">
+
+                    Informasi Pembeli
+
+                </h5>
+
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-2">
+
+                        <div class="text-secondary small">
+                            Nama
+                        </div>
+
+                        <strong>
+                            ${order.customer?.name || "-"}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="col-md-6 mb-2">
+
+                        <div class="text-secondary small">
+                            No. Telepon
+                        </div>
+
+                        <strong>
+                            ${order.customer?.phone || "-"}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="col-12 mt-2">
+
+                        <div class="text-secondary small">
+                            Alamat
+                        </div>
+
+                        <strong>
+                            ${order.customer?.address || "-"}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
 
 
             <hr>
@@ -155,54 +357,17 @@ else {
             <!-- PRODUK -->
 
             <h5 class="fw-bold mb-3">
-                Detail Produk
+
+                Detail Pesanan
+
             </h5>
 
 
-            ${order.items.map(item => `
+            <div class="invoice-products">
 
-                <div class="invoice-item">
+                ${itemsHTML}
 
-                    <img
-                        src="${item.image}"
-                        alt="${item.name}">
-
-
-                    <div class="flex-grow-1">
-
-                        <strong>
-                            ${item.name}
-                        </strong>
-
-                        <br>
-
-                        <small>
-
-                            Ukuran:
-                            ${item.size}
-
-                            <br>
-
-                            Jumlah:
-                            ${item.quantity}
-
-                        </small>
-
-                    </div>
-
-
-                    <strong>
-
-                        ${rupiah(
-                            item.price *
-                            item.quantity
-                        )}
-
-                    </strong>
-
-                </div>
-
-            `).join("")}
+            </div>
 
 
             <hr>
@@ -210,113 +375,106 @@ else {
 
             <!-- RINGKASAN -->
 
-            <div class="d-flex justify-content-between">
+            <div class="invoice-summary">
 
-                <span>
-                    Subtotal
-                </span>
+                <div class="d-flex justify-content-between mb-2">
 
-                <strong>
-                    ${rupiah(
-                        order.subtotal
-                    )}
-                </strong>
+                    <span>
+                        Subtotal
+                    </span>
 
-            </div>
+                    <strong>
+                        ${formatRupiah(order.subtotal)}
+                    </strong>
 
-
-            <div class="d-flex justify-content-between mt-2">
-
-                <span>
-                    Ongkir
-                </span>
-
-                <strong>
-                    ${rupiah(
-                        order.shipping
-                    )}
-                </strong>
-
-            </div>
+                </div>
 
 
-            <div class="d-flex justify-content-between mt-2">
+                <div class="d-flex justify-content-between mb-2">
 
-                <span>
-                    Pembayaran
-                </span>
+                    <span>
+                        Ongkir
+                    </span>
 
-                <strong>
-                    ${order.payment}
-                </strong>
+                    <strong>
+                        ${formatRupiah(order.shipping)}
+                    </strong>
 
-            </div>
-
-
-            <hr>
+                </div>
 
 
-            <div class="d-flex justify-content-between fs-4">
+                <hr>
 
-                <strong>
-                    Total
-                </strong>
 
-                <strong>
-                    ${rupiah(
-                        order.total
-                    )}
-                </strong>
+                <div class="d-flex justify-content-between fs-5">
+
+                    <strong>
+                        Total
+                    </strong>
+
+                    <strong>
+                        ${formatRupiah(order.total)}
+                    </strong>
+
+                </div>
 
             </div>
 
 
-            <!-- NOTIFIKASI -->
+            <div class="payment-info mt-4 p-3">
 
-            <div class="alert alert-success mt-4">
+                <div class="text-secondary small">
 
-                🔔
+                    Metode Pembayaran
+
+                </div>
 
                 <strong>
-                    Pembayaran berhasil!
-                </strong>
 
-                <br>
+                    ${paymentName}
 
-                Pesanan
-                <strong>
-                    ${order.orderId}
                 </strong>
-                sedang diproses.
 
             </div>
 
 
             <!-- BUTTON -->
 
-            <div class="text-center mt-4">
-
-                <a
-                    href="products.html"
-                    class="btn btn-dark">
-
-                    Belanja Lagi
-
-                </a>
-
+            <div class="invoice-buttons mt-4">
 
                 <button
+                    type="button"
                     onclick="window.print()"
-                    class="btn btn-outline-dark">
+                    class="btn btn-dark">
 
                     🖨️ Cetak Invoice
 
                 </button>
 
+
+                <a
+                    href="index.html"
+                    class="btn btn-outline-dark">
+
+                    🏠 Kembali ke Home
+
+                </a>
+
             </div>
+
 
         </div>
 
     `;
 
 }
+
+
+// ==========================================
+// JALANKAN
+// ==========================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    displayInvoice
+);
