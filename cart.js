@@ -1,4 +1,9 @@
 // ===================================
+// STYLEHUB - CART SYSTEM
+// ===================================
+
+
+// ===================================
 // AMBIL CART
 // ===================================
 
@@ -54,22 +59,39 @@ function displayCart() {
             "cartContainer"
         );
 
+    if (!container) return;
 
-    const cart =
-        getCart();
 
+    const cart = getCart();
+
+
+    // ================================
+    // CART KOSONG
+    // ================================
 
     if (cart.length === 0) {
 
         container.innerHTML = `
 
-            <div class="empty-cart">
+            <div
+                style="
+                    background:white;
+                    padding:60px 20px;
+                    border-radius:18px;
+                    text-align:center;
+                "
+            >
 
-                <div class="display-1">
+                <div
+                    style="
+                        font-size:60px;
+                        margin-bottom:15px;
+                    "
+                >
                     🛒
                 </div>
 
-                <h2>
+                <h2 class="fw-bold">
                     Keranjang Kosong
                 </h2>
 
@@ -79,10 +101,9 @@ function displayCart() {
 
                 <a
                     href="products.html"
-                    class="btn btn-dark">
-
+                    class="btn btn-dark mt-2"
+                >
                     Mulai Belanja
-
                 </a>
 
             </div>
@@ -106,11 +127,15 @@ function displayCart() {
     `;
 
 
+    // ================================
+    // PRODUK
+    // ================================
+
     cart.forEach(item => {
 
         const itemTotal =
-            item.price *
-            item.quantity;
+            Number(item.price) *
+            Number(item.quantity);
 
 
         subtotal += itemTotal;
@@ -118,41 +143,137 @@ function displayCart() {
 
         html += `
 
-            <div class="cart-item">
+            <div
+                style="
+                    background:#fff;
+                    border-radius:16px;
+                    padding:15px;
+                    margin-bottom:12px;
+                    display:flex;
+                    align-items:center;
+                    gap:15px;
+                    box-shadow:0 4px 15px rgba(0,0,0,.05);
+                "
+            >
+
+
+                <!-- GAMBAR PRODUK -->
 
                 <img
+
                     src="${item.image}"
-                    alt="${item.name}">
+
+                    alt="${item.name}"
+
+                    style="
+                        width:65px;
+                        height:75px;
+                        min-width:65px;
+                        max-width:65px;
+                        min-height:75px;
+                        max-height:75px;
+                        object-fit:contain;
+                        background:#f3f3f3;
+                        border-radius:9px;
+                        display:block;
+                    "
+
+                >
 
 
-                <div class="cart-info">
+                <!-- INFORMASI -->
 
-                    <h5>
+                <div
+                    style="
+                        flex:1;
+                        min-width:0;
+                    "
+                >
+
+                    <h6
+                        class="fw-bold mb-1"
+                    >
                         ${item.name}
-                    </h5>
+                    </h6>
 
-                    <p class="text-secondary">
+
+                    <small
+                        class="text-secondary"
+                    >
                         Ukuran: ${item.size}
-                    </p>
+                    </small>
 
-                    <strong>
+
+                    <div class="fw-bold mt-1">
+
                         ${formatRupiah(item.price)}
-                    </strong>
+
+                    </div>
 
 
-                    <div class="quantity-control mt-2">
+                    <!-- QUANTITY -->
+
+                    <div
+                        style="
+                            display:inline-flex;
+                            align-items:center;
+                            border:1px solid #ddd;
+                            border-radius:8px;
+                            overflow:hidden;
+                            margin-top:8px;
+                        "
+                    >
 
                         <button
-                            onclick="changeQuantity(${item.id}, '${item.size}', -1)">
+
+                            onclick="
+                                changeQuantity(
+                                    ${item.id},
+                                    '${item.size}',
+                                    -1
+                                )
+                            "
+
+                            style="
+                                border:none;
+                                background:#eee;
+                                width:30px;
+                                height:30px;
+                            "
+
+                        >
                             −
                         </button>
 
-                        <span>
+
+                        <span
+                            style="
+                                width:35px;
+                                text-align:center;
+                            "
+                        >
                             ${item.quantity}
                         </span>
 
+
                         <button
-                            onclick="changeQuantity(${item.id}, '${item.size}', 1)">
+
+                            onclick="
+                                changeQuantity(
+                                    ${item.id},
+                                    '${item.size}',
+                                    1
+                                )
+                            "
+
+                            style="
+                                border:none;
+                                background:#eee;
+                                width:30px;
+                                height:30px;
+                            "
+
+                        >
                             +
                         </button>
 
@@ -161,17 +282,37 @@ function displayCart() {
                 </div>
 
 
-                <div class="text-end">
+                <!-- TOTAL PRODUK -->
+
+                <div
+                    style="
+                        text-align:right;
+                        min-width:100px;
+                    "
+                >
 
                     <strong>
+
                         ${formatRupiah(itemTotal)}
+
                     </strong>
+
 
                     <br>
 
+
                     <button
-                        onclick="removeCart(${item.id}, '${item.size}')"
-                        class="btn btn-sm btn-outline-danger mt-2">
+
+                        onclick="
+                            removeCart(
+                                ${item.id},
+                                '${item.size}'
+                            )
+                        "
+
+                        class="btn btn-sm btn-outline-danger mt-2"
+
+                    >
 
                         Hapus
 
@@ -186,6 +327,17 @@ function displayCart() {
     });
 
 
+    // ================================
+    // SUMMARY
+    // ================================
+
+    const shipping = 15000;
+
+    const total =
+        subtotal +
+        shipping;
+
+
     html += `
 
             </div>
@@ -193,15 +345,26 @@ function displayCart() {
 
             <div class="col-lg-4">
 
-                <div class="summary-card">
+                <div
+                    style="
+                        background:#fff;
+                        border-radius:16px;
+                        padding:22px;
+                        box-shadow:0 4px 15px rgba(0,0,0,.05);
+                    "
+                >
 
-                    <h4>
-                        Ringkasan
+                    <h4 class="fw-bold">
+                        Ringkasan Pesanan
                     </h4>
+
 
                     <hr>
 
-                    <div class="d-flex justify-content-between">
+
+                    <div
+                        class="d-flex justify-content-between"
+                    >
 
                         <span>
                             Subtotal
@@ -214,14 +377,16 @@ function displayCart() {
                     </div>
 
 
-                    <div class="d-flex justify-content-between mt-2">
+                    <div
+                        class="d-flex justify-content-between mt-2"
+                    >
 
                         <span>
                             Ongkir
                         </span>
 
                         <strong>
-                            Rp15.000
+                            ${formatRupiah(shipping)}
                         </strong>
 
                     </div>
@@ -230,22 +395,28 @@ function displayCart() {
                     <hr>
 
 
-                    <div class="d-flex justify-content-between fs-5">
+                    <div
+                        class="d-flex justify-content-between fs-5"
+                    >
 
                         <strong>
                             Total
                         </strong>
 
                         <strong>
-                            ${formatRupiah(subtotal + 15000)}
+                            ${formatRupiah(total)}
                         </strong>
 
                     </div>
 
 
                     <a
+
                         href="checkout.html"
-                        class="btn btn-dark w-100 mt-4">
+
+                        class="btn btn-dark w-100 mt-4"
+
+                    >
 
                         Checkout
 
@@ -291,9 +462,13 @@ function changeQuantity(
     if (!item) return;
 
 
-    item.quantity +=
-        change;
+    item.quantity =
+        Number(item.quantity) +
+        Number(change);
 
+
+    // Jika jumlah menjadi 0,
+    // produk dihapus dari cart.
 
     if (item.quantity <= 0) {
 
@@ -313,14 +488,19 @@ function changeQuantity(
 
     displayCart();
 
+    updateCartCount();
+
 }
 
 
 // ===================================
-// HAPUS
+// HAPUS PRODUK
 // ===================================
 
-function removeCart(id, size) {
+function removeCart(
+    id,
+    size
+) {
 
     let cart =
         getCart();
@@ -340,5 +520,57 @@ function removeCart(id, size) {
 
     displayCart();
 
+    updateCartCount();
+
 }
 
+
+// ===================================
+// UPDATE JUMLAH ICON CART
+// ===================================
+
+function updateCartCount() {
+
+    const cart =
+        getCart();
+
+
+    const total =
+        cart.reduce(
+            (sum, item) =>
+                sum +
+                Number(item.quantity),
+            0
+        );
+
+
+    const badge =
+        document.getElementById(
+            "cartCount"
+        );
+
+
+    if (badge) {
+
+        badge.textContent =
+            total;
+
+    }
+
+}
+
+
+// ===================================
+// JALANKAN SAAT HALAMAN DIBUKA
+// ===================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        displayCart();
+
+        updateCartCount();
+
+    }
+);
