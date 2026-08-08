@@ -17,81 +17,61 @@ function formatRupiah(number) {
 
         maximumFractionDigits: 0
 
-    }).format(Number(number));
+    }).format(Number(number) || 0);
 
 }
 
 
 // ==========================================
-// AMBIL DATA ORDER
+// LOAD INVOICE
 // ==========================================
 
-function getLastOrder() {
+function loadInvoice() {
 
-    try {
+    const invoice =
+        document.getElementById("invoice");
 
-        return JSON.parse(
-            localStorage.getItem("lastOrder")
-        );
 
-    } catch (error) {
+    if (!invoice) {
 
-        return null;
+        return;
 
     }
 
-}
 
+    // Ambil pesanan terakhir
 
-// ==========================================
-// TAMPILKAN INVOICE
-// ==========================================
-
-function displayInvoice() {
-
-    const container =
-        document.getElementById("invoiceContainer");
-
-
-    if (!container) return;
-
-
-    const order =
-        getLastOrder();
+    const savedOrder =
+        localStorage.getItem("lastOrder");
 
 
     // ======================================
-    // JIKA ORDER TIDAK ADA
+    // JIKA BELUM ADA PESANAN
     // ======================================
 
-    if (!order) {
+    if (!savedOrder) {
 
-        container.innerHTML = `
+        invoice.innerHTML = `
 
             <div class="invoice-card text-center">
 
-                <div class="mb-4"
-                     style="font-size:70px;">
-
+                <div style="font-size:70px;">
                     📄
-
                 </div>
 
-                <h2 class="fw-bold">
+                <h2 class="fw-bold mt-3">
                     Invoice Tidak Ditemukan
                 </h2>
 
                 <p class="text-secondary">
-
                     Belum ada pesanan yang dibuat.
-
                 </p>
 
                 <a
                     href="products.html"
                     class="btn btn-dark">
 
-                    Kembali Belanja
+                    Mulai Belanja
 
                 </a>
 
@@ -105,8 +85,61 @@ function displayInvoice() {
 
 
     // ======================================
-    // DATA ORDER
+    // BACA DATA ORDER
     // ======================================
+
+    let order;
+
+
+    try {
+
+        order =
+            JSON.parse(savedOrder);
+
+    } catch (error) {
+
+        console.error(
+            "Invoice error:",
+            error
+        );
+
+
+        invoice.innerHTML = `
+
+            <div class="invoice-card text-center">
+
+                <h2 class="fw-bold">
+                    Data Invoice Rusak
+                </h2>
+
+                <p class="text-secondary">
+                    Silakan buat pesanan baru.
+                </p>
+
+                <a
+                    href="products.html"
+                    class="btn btn-dark">
+
+                    Belanja Lagi
+
+                </a>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    // ======================================
+    // DATA CUSTOMER
+    // ======================================
+
+    const customer =
+        order.customer || {};
+
 
     const items =
         Array.isArray(order.items)
@@ -114,10 +147,14 @@ function displayInvoice() {
             : [];
 
 
-    let itemsHTML = "";
+    // ======================================
+    // PRODUK
+    // ======================================
+
+    let productsHTML = "";
 
 
-    items.forEach(item => {
+    items.forEach(function(item) {
 
         const price =
             Number(item.price) || 0;
@@ -131,25 +168,29 @@ function displayInvoice() {
             price * quantity;
 
 
-        itemsHTML += `
+        productsHTML += `
 
             <div class="invoice-product">
 
                 <img
-                    src="${item.image}"
-                    alt="${item.name}">
+                    src="${item.image || ""}"
+                    alt="${item.name || "Produk"}">
 
                 <div class="invoice-product-info">
 
-                    <div class="fw-bold">
-                        ${item.name}
-                    </div>
+                    <strong>
+                        ${item.name || "Produk"}
+                    </strong>
 
                     <div class="text-secondary small">
 
-                        Ukuran: ${item.size || "-"}
-                        &nbsp; • &nbsp;
-                        Qty: ${quantity}
+                        Ukuran:
+                        ${item.size || "-"}
+
+                        <br>
+
+                        Jumlah:
+                        ${quantity}
 
                     </div>
 
@@ -162,11 +203,12 @@ function displayInvoice() {
 
                 </div>
 
-                <div class="fw-bold invoice-product-price">
+
+                <strong class="invoice-price">
 
                     ${formatRupiah(itemTotal)}
 
-                </div>
+                </strong>
 
             </div>
 
@@ -176,52 +218,17 @@ function displayInvoice() {
 
 
     // ======================================
-    // PEMBAYARAN
+    // TAMPILKAN INVOICE
     // ======================================
 
-    let paymentName =
-        order.payment || "-";
-
-
-    // Biar tampilan lebih enak dibaca
-
-    const paymentNames = {
-
-        cod: "COD",
-
-        transfer: "Transfer Bank",
-
-        qris: "QRIS",
-
-        dana: "DANA",
-
-        ovo: "OVO",
-
-        gopay: "GoPay"
-
-    };
-
-
-    if (paymentNames[paymentName]) {
-
-        paymentName =
-            paymentNames[paymentName];
-
-    }
-
-
-    // ======================================
-    // TAMPILKAN
-    // ======================================
-
-    container.innerHTML = `
+    invoice.innerHTML = `
 
         <div class="invoice-card">
 
 
-            <!-- SUCCESS -->
+            <!-- STATUS -->
 
-            <div class="text-center mb-4">
+            <div class="text-center">
 
                 <div class="success-icon">
 
@@ -229,15 +236,17 @@ function displayInvoice() {
 
                 </div>
 
-                <h1 class="fw-bold mb-2">
 
-                    Pembayaran Berhasil!
+                <h1 class="fw-bold">
+
+                    Pesanan Berhasil!
 
                 </h1>
 
+
                 <p class="text-secondary">
 
-                    Terima kasih sudah berbelanja
+                    Terima kasih telah berbelanja
                     di StyleHub.
 
                 </p>
@@ -248,44 +257,36 @@ function displayInvoice() {
             <hr>
 
 
-            <!-- HEADER INVOICE -->
+            <!-- INFO ORDER -->
 
-            <div class="invoice-header">
+            <div class="row mb-4">
 
-                <div>
+                <div class="col-md-6 mb-3">
 
-                    <h3 class="fw-bold mb-1">
+                    <small class="text-secondary">
+                        Nomor Pesanan
+                    </small>
 
-                        STYLE<span>HUB</span>
+                    <h5 class="fw-bold">
 
-                    </h3>
+                        ${order.orderId || "-"}
 
-                    <p class="text-secondary mb-0">
-
-                        Fashion for Everyone
-
-                    </p>
+                    </h5>
 
                 </div>
 
 
-                <div class="text-end">
+                <div class="col-md-6 mb-3">
 
-                    <strong>
-                        INVOICE
-                    </strong>
+                    <small class="text-secondary">
+                        Tanggal
+                    </small>
 
-                    <div class="small text-secondary">
-
-                        ${order.orderId || "-"}
-
-                    </div>
-
-                    <div class="small text-secondary">
+                    <h5 class="fw-bold">
 
                         ${order.date || "-"}
 
-                    </div>
+                    </h5>
 
                 </div>
 
@@ -297,56 +298,34 @@ function displayInvoice() {
 
             <!-- CUSTOMER -->
 
-            <div class="invoice-customer mb-4">
+            <h5 class="fw-bold mb-3">
 
-                <h5 class="fw-bold mb-3">
+                Informasi Pengiriman
 
-                    Informasi Pembeli
-
-                </h5>
+            </h5>
 
 
-                <div class="row">
+            <div class="mb-2">
 
-                    <div class="col-md-6 mb-2">
+                <strong>
+                    ${customer.name || "-"}
+                </strong>
 
-                        <div class="text-secondary small">
-                            Nama
-                        </div>
-
-                        <strong>
-                            ${order.customer?.name || "-"}
-                        </strong>
-
-                    </div>
+            </div>
 
 
-                    <div class="col-md-6 mb-2">
+            <div class="mb-2">
 
-                        <div class="text-secondary small">
-                            No. Telepon
-                        </div>
+                📱
+                ${customer.phone || "-"}
 
-                        <strong>
-                            ${order.customer?.phone || "-"}
-                        </strong>
-
-                    </div>
+            </div>
 
 
-                    <div class="col-12 mt-2">
+            <div class="mb-4">
 
-                        <div class="text-secondary small">
-                            Alamat
-                        </div>
-
-                        <strong>
-                            ${order.customer?.address || "-"}
-                        </strong>
-
-                    </div>
-
-                </div>
+                📍
+                ${customer.address || "-"}
 
             </div>
 
@@ -358,14 +337,14 @@ function displayInvoice() {
 
             <h5 class="fw-bold mb-3">
 
-                Detail Pesanan
+                Detail Produk
 
             </h5>
 
 
-            <div class="invoice-products">
+            <div>
 
-                ${itemsHTML}
+                ${productsHTML}
 
             </div>
 
@@ -373,92 +352,118 @@ function displayInvoice() {
             <hr>
 
 
-            <!-- RINGKASAN -->
+            <!-- TOTAL -->
 
-            <div class="invoice-summary">
+            <div class="d-flex justify-content-between mb-2">
 
-                <div class="d-flex justify-content-between mb-2">
-
-                    <span>
-                        Subtotal
-                    </span>
-
-                    <strong>
-                        ${formatRupiah(order.subtotal)}
-                    </strong>
-
-                </div>
-
-
-                <div class="d-flex justify-content-between mb-2">
-
-                    <span>
-                        Ongkir
-                    </span>
-
-                    <strong>
-                        ${formatRupiah(order.shipping)}
-                    </strong>
-
-                </div>
-
-
-                <hr>
-
-
-                <div class="d-flex justify-content-between fs-5">
-
-                    <strong>
-                        Total
-                    </strong>
-
-                    <strong>
-                        ${formatRupiah(order.total)}
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <div class="payment-info mt-4 p-3">
-
-                <div class="text-secondary small">
-
-                    Metode Pembayaran
-
-                </div>
+                <span>
+                    Subtotal
+                </span>
 
                 <strong>
 
-                    ${paymentName}
+                    ${formatRupiah(
+                        order.subtotal
+                    )}
 
                 </strong>
 
             </div>
 
 
+            <div class="d-flex justify-content-between mb-2">
+
+                <span>
+                    Ongkir
+                </span>
+
+                <strong>
+
+                    ${formatRupiah(
+                        order.shipping
+                    )}
+
+                </strong>
+
+            </div>
+
+
+            <div class="d-flex justify-content-between mb-2">
+
+                <span>
+                    Pembayaran
+                </span>
+
+                <strong>
+
+                    ${order.payment || "-"}
+
+                </strong>
+
+            </div>
+
+
+            <hr>
+
+
+            <div class="d-flex justify-content-between fs-4">
+
+                <strong>
+                    Total
+                </strong>
+
+                <strong>
+
+                    ${formatRupiah(
+                        order.total
+                    )}
+
+                </strong>
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div class="alert alert-success mt-4">
+
+                <strong>
+                    ✓ Pembayaran berhasil!
+                </strong>
+
+                <br>
+
+                Pesanan
+                <strong>
+                    ${order.orderId || "-"}
+                </strong>
+
+                sedang diproses.
+
+            </div>
+
+
             <!-- BUTTON -->
 
-            <div class="invoice-buttons mt-4">
+            <div class="d-flex gap-2 flex-wrap mt-4">
+
+                <a
+                    href="products.html"
+                    class="btn btn-dark">
+
+                    Belanja Lagi
+
+                </a>
+
 
                 <button
                     type="button"
                     onclick="window.print()"
-                    class="btn btn-dark">
+                    class="btn btn-outline-dark">
 
                     🖨️ Cetak Invoice
 
                 </button>
-
-
-                <a
-                    href="index.html"
-                    class="btn btn-outline-dark">
-
-                    🏠 Kembali ke Home
-
-                </a>
 
             </div>
 
@@ -471,10 +476,10 @@ function displayInvoice() {
 
 
 // ==========================================
-// JALANKAN
+// JALANKAN SAAT HALAMAN DIBUKA
 // ==========================================
 
 document.addEventListener(
     "DOMContentLoaded",
-    displayInvoice
+    loadInvoice
 );
