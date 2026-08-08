@@ -1,180 +1,265 @@
-const form = document.getElementById("checkoutForm");
+// ==========================================
+// STYLEHUB - CHECKOUT
+// ==========================================
 
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-
-// ===============================
+// ==========================================
 // FORMAT RUPIAH
-// ===============================
+// ==========================================
 
-function rupiah(angka) {
+function formatRupiah(number) {
 
     return new Intl.NumberFormat("id-ID", {
         style: "currency",
         currency: "IDR",
         maximumFractionDigits: 0
-    }).format(angka);
+    }).format(number);
 
 }
 
 
-// ===============================
-// TAMPILKAN CHECKOUT
-// ===============================
+// ==========================================
+// AMBIL CART
+// ==========================================
 
-function tampilkanCheckout() {
+function getCart() {
+
+    return JSON.parse(
+        localStorage.getItem("cart")
+    ) || [];
+
+}
+
+
+// ==========================================
+// TAMPILKAN RINGKASAN CHECKOUT
+// ==========================================
+
+function displayCheckout() {
+
+    const cart = getCart();
 
     const container =
         document.getElementById("checkoutItems");
 
+    const subtotalElement =
+        document.getElementById("subtotal");
+
+    const shippingElement =
+        document.getElementById("shippingPrice");
+
+    const totalElement =
+        document.getElementById("total");
+
+
+    if (!container) return;
+
+
+    // Jika cart kosong
+
+    if (cart.length === 0) {
+
+        container.innerHTML = `
+
+            <div class="text-center py-4">
+
+                <h5>
+                    Keranjang kosong
+                </h5>
+
+                <a
+                    href="products.html"
+                    class="btn btn-dark mt-2">
+
+                    Belanja Sekarang
+
+                </a>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
     let subtotal = 0;
 
-    container.innerHTML = "";
+
+    let html = "";
+
 
     cart.forEach(item => {
 
-        const harga =
-            item.price * item.quantity;
+        const itemTotal =
+            Number(item.price) *
+            Number(item.quantity);
 
-        subtotal += harga;
 
-        container.innerHTML += `
-            <div class="mb-3">
+        subtotal += itemTotal;
 
-                <strong>
-                    ${item.name}
-                </strong>
 
-                <br>
+        html += `
 
-                <small>
-                    Ukuran: ${item.size}
+            <div
+                class="d-flex align-items-center mb-3"
+                style="gap:12px;"
+            >
+
+                <img
+                    src="${item.image}"
+                    alt="${item.name}"
+                    style="
+                        width:55px;
+                        height:65px;
+                        object-fit:contain;
+                        background:#f3f3f3;
+                        border-radius:8px;
+                    "
+                >
+
+                <div class="flex-grow-1">
+
+                    <strong>
+                        ${item.name}
+                    </strong>
+
                     <br>
-                    Jumlah: ${item.quantity}
-                </small>
 
-                <br>
+                    <small class="text-secondary">
+
+                        Ukuran: ${item.size}
+                        |
+                        Qty: ${item.quantity}
+
+                    </small>
+
+                </div>
 
                 <strong>
-                    ${rupiah(harga)}
+
+                    ${formatRupiah(itemTotal)}
+
                 </strong>
 
             </div>
+
         `;
 
     });
 
 
-    updateTotal(subtotal);
-
-}
+    container.innerHTML = html;
 
 
-// ===============================
-// TOTAL
-// ===============================
+    const shippingSelect =
+        document.getElementById("shipping");
 
-function updateTotal(subtotal) {
 
     const shipping =
-        Number(
-            document.getElementById("shipping").value
-        );
+        shippingSelect
+            ? Number(shippingSelect.value)
+            : 15000;
 
 
-    document.getElementById("subtotal")
-        .textContent =
-        rupiah(subtotal);
+    const total =
+        subtotal + shipping;
 
 
-    document.getElementById("shippingPrice")
-        .textContent =
-        rupiah(shipping);
+    subtotalElement.textContent =
+        formatRupiah(subtotal);
 
 
-    document.getElementById("total")
-        .textContent =
-        rupiah(
-            subtotal + shipping
-        );
+    shippingElement.textContent =
+        formatRupiah(shipping);
+
+
+    totalElement.textContent =
+        formatRupiah(total);
 
 }
 
 
-// ===============================
-// GANTI ONGKIR
-// ===============================
+// ==========================================
+// UPDATE ONGKIR
+// ==========================================
 
-document
-    .getElementById("shipping")
-    .addEventListener("change", function () {
+function updateShipping() {
 
-        let subtotal = 0;
+    const cart = getCart();
 
-        cart.forEach(item => {
 
-            subtotal +=
-                item.price *
-                item.quantity;
+    let subtotal = 0;
 
-        });
 
-        updateTotal(subtotal);
+    cart.forEach(item => {
+
+        subtotal +=
+            Number(item.price) *
+            Number(item.quantity);
 
     });
 
 
-// ===============================
-// BAYAR
-// ===============================
+    const shippingSelect =
+        document.getElementById("shipping");
 
-form.addEventListener("submit", function(event) {
+
+    const shipping =
+        shippingSelect
+            ? Number(shippingSelect.value)
+            : 15000;
+
+
+    const total =
+        subtotal + shipping;
+
+
+    const shippingElement =
+        document.getElementById("shippingPrice");
+
+
+    const totalElement =
+        document.getElementById("total");
+
+
+    if (shippingElement) {
+
+        shippingElement.textContent =
+            formatRupiah(shipping);
+
+    }
+
+
+    if (totalElement) {
+
+        totalElement.textContent =
+            formatRupiah(total);
+
+    }
+
+}
+
+
+// ==========================================
+// BUAT PESANAN
+// ==========================================
+
+function createOrder(event) {
 
     event.preventDefault();
 
 
-    const nama =
-        document.getElementById(
-            "customerName"
-        ).value.trim();
+    const cart = getCart();
 
 
-    const hp =
-        document.getElementById(
-            "customerPhone"
-        ).value.trim();
+    // Jangan lanjut jika cart kosong
 
-
-    const alamat =
-        document.getElementById(
-            "customerAddress"
-        ).value.trim();
-
-
-    const kurir =
-        Number(
-            document.getElementById(
-                "shipping"
-            ).value
-        );
-
-
-    const pembayaran =
-        document.getElementById(
-            "payment"
-        ).value;
-
-
-    // Validasi
-    if (
-        nama === "" ||
-        hp === "" ||
-        alamat === "" ||
-        pembayaran === ""
-    ) {
+    if (cart.length === 0) {
 
         alert(
-            "Harap lengkapi semua data!"
+            "Keranjang kamu masih kosong!"
         );
 
         return;
@@ -182,62 +267,149 @@ form.addEventListener("submit", function(event) {
     }
 
 
-    // Hitung subtotal
+    // ======================================
+    // AMBIL DATA CUSTOMER
+    // ======================================
+
+    const name =
+        document.getElementById(
+            "customerName"
+        ).value.trim();
+
+
+    const phone =
+        document.getElementById(
+            "customerPhone"
+        ).value.trim();
+
+
+    const address =
+        document.getElementById(
+            "customerAddress"
+        ).value.trim();
+
+
+    const shippingElement =
+        document.getElementById(
+            "shipping"
+        );
+
+
+    const paymentElement =
+        document.getElementById(
+            "payment"
+        );
+
+
+    const shipping =
+        Number(
+            shippingElement.value
+        );
+
+
+    const payment =
+        paymentElement.value;
+
+
+    // ======================================
+    // VALIDASI
+    // ======================================
+
+    if (
+        !name ||
+        !phone ||
+        !address ||
+        !payment
+    ) {
+
+        alert(
+            "Mohon lengkapi semua data checkout!"
+        );
+
+        return;
+
+    }
+
+
+    // ======================================
+    // HITUNG SUBTOTAL
+    // ======================================
+
     let subtotal = 0;
+
 
     cart.forEach(item => {
 
         subtotal +=
-            item.price *
-            item.quantity;
+            Number(item.price) *
+            Number(item.quantity);
 
     });
 
 
     const total =
-        subtotal + kurir;
+        subtotal + shipping;
 
 
-    // ===============================
-    // DATA INVOICE
-    // ===============================
+    // ======================================
+    // BUAT NOMOR ORDER
+    // ======================================
+
+    const orderId =
+        "SH-" +
+        Date.now();
+
+
+    // ======================================
+    // BUAT TANGGAL
+    // ======================================
+
+    const date =
+        new Date().toLocaleString(
+            "id-ID",
+            {
+                dateStyle: "long",
+                timeStyle: "short"
+            }
+        );
+
+
+    // ======================================
+    // OBJECT ORDER
+    // ======================================
 
     const order = {
 
-        orderId:
-            "SH-" + Date.now(),
+        orderId: orderId,
 
-        date:
-            new Date().toLocaleString(
-                "id-ID"
-            ),
+        date: date,
 
         customer: {
 
-            name: nama,
+            name: name,
 
-            phone: hp,
+            phone: phone,
 
-            address: alamat
+            address: address
 
         },
-
-        shipping: kurir,
-
-        payment: pembayaran,
 
         items: cart,
 
         subtotal: subtotal,
+
+        shipping: shipping,
+
+        payment: payment,
 
         total: total
 
     };
 
 
-    // ===============================
-    // SIMPAN INVOICE
-    // ===============================
+    // ======================================
+    // SIMPAN ORDER
+    // ======================================
 
     localStorage.setItem(
         "lastOrder",
@@ -245,16 +417,71 @@ form.addEventListener("submit", function(event) {
     );
 
 
-    // Hapus keranjang
+    // ======================================
+    // KOSONGKAN CART
+    // ======================================
+
     localStorage.removeItem("cart");
 
 
-    // Pindah ke invoice
+    // ======================================
+    // PINDAH KE INVOICE
+    // ======================================
+
     window.location.href =
         "invoice.html";
 
-});
+}
 
 
-// Jalankan
-tampilkanCheckout();
+// ==========================================
+// SAAT HALAMAN SELESAI DIMUAT
+// ==========================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+
+        // Tampilkan checkout
+
+        displayCheckout();
+
+
+        // Form checkout
+
+        const form =
+            document.getElementById(
+                "checkoutForm"
+            );
+
+
+        if (form) {
+
+            form.addEventListener(
+                "submit",
+                createOrder
+            );
+
+        }
+
+
+        // Perubahan kurir
+
+        const shipping =
+            document.getElementById(
+                "shipping"
+            );
+
+
+        if (shipping) {
+
+            shipping.addEventListener(
+                "change",
+                updateShipping
+            );
+
+        }
+
+    }
+);
