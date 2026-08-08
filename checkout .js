@@ -1,5 +1,5 @@
 // ==========================================
-// STYLEHUB - INVOICE
+// STYLEHUB - CHECKOUT.JS FINAL
 // ==========================================
 
 
@@ -10,117 +10,78 @@
 function formatRupiah(number) {
 
     return new Intl.NumberFormat("id-ID", {
-
         style: "currency",
-
         currency: "IDR",
-
         maximumFractionDigits: 0
-
     }).format(Number(number) || 0);
 
 }
 
 
 // ==========================================
-// LOAD INVOICE
+// AMBIL CART DARI LOCAL STORAGE
 // ==========================================
 
-function loadInvoice() {
-
-    const invoice =
-        document.getElementById("invoice");
-
-
-    if (!invoice) {
-
-        return;
-
-    }
-
-
-    // Ambil pesanan terakhir
-
-    const savedOrder =
-        localStorage.getItem("lastOrder");
-
-
-    // ======================================
-    // JIKA BELUM ADA PESANAN
-    // ======================================
-
-    if (!savedOrder) {
-
-        invoice.innerHTML = `
-
-            <div class="invoice-card text-center">
-
-                <div style="font-size:70px;">
-                    📄
-                </div>
-
-                <h2 class="fw-bold mt-3">
-                    Invoice Tidak Ditemukan
-                </h2>
-
-                <p class="text-secondary">
-                    Belum ada pesanan yang dibuat.
-                </p>
-
-                <a
-                    href="products.html"
-                    class="btn btn-dark">
-
-                    Mulai Belanja
-
-                </a>
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    // ======================================
-    // BACA DATA ORDER
-    // ======================================
-
-    let order;
-
+function getCart() {
 
     try {
 
-        order =
-            JSON.parse(savedOrder);
+        return JSON.parse(
+            localStorage.getItem("cart")
+        ) || [];
 
     } catch (error) {
 
-        console.error(
-            "Invoice error:",
-            error
-        );
+        console.error("Cart error:", error);
+
+        return [];
+
+    }
+
+}
 
 
-        invoice.innerHTML = `
+// ==========================================
+// TAMPILKAN PRODUK DI CHECKOUT
+// ==========================================
 
-            <div class="invoice-card text-center">
+function displayCheckout() {
 
-                <h2 class="fw-bold">
-                    Data Invoice Rusak
-                </h2>
+    const container =
+        document.getElementById("checkoutItems");
+
+
+    if (!container) return;
+
+
+    const cart = getCart();
+
+
+    // Jika cart kosong
+
+    if (cart.length === 0) {
+
+        container.innerHTML = `
+
+            <div class="text-center py-4">
+
+                <div style="font-size:50px;">
+                    🛒
+                </div>
+
+                <h5 class="fw-bold">
+                    Keranjang Kosong
+                </h5>
 
                 <p class="text-secondary">
-                    Silakan buat pesanan baru.
+                    Belum ada produk yang dipilih.
                 </p>
 
                 <a
                     href="products.html"
                     class="btn btn-dark">
 
-                    Belanja Lagi
+                    Belanja Sekarang
 
                 </a>
 
@@ -128,33 +89,19 @@ function loadInvoice() {
 
         `;
 
+        updateTotal();
+
         return;
 
     }
 
 
-    // ======================================
-    // DATA CUSTOMER
-    // ======================================
+    let subtotal = 0;
 
-    const customer =
-        order.customer || {};
+    let html = "";
 
 
-    const items =
-        Array.isArray(order.items)
-            ? order.items
-            : [];
-
-
-    // ======================================
-    // PRODUK
-    // ======================================
-
-    let productsHTML = "";
-
-
-    items.forEach(function(item) {
+    cart.forEach(function(item) {
 
         const price =
             Number(item.price) || 0;
@@ -168,21 +115,38 @@ function loadInvoice() {
             price * quantity;
 
 
-        productsHTML += `
+        subtotal += itemTotal;
 
-            <div class="invoice-product">
+
+        html += `
+
+            <div
+                class="d-flex align-items-center mb-3"
+                style="gap:12px;"
+            >
 
                 <img
                     src="${item.image || ""}"
-                    alt="${item.name || "Produk"}">
+                    alt="${item.name || "Produk"}"
+                    style="
+                        width:60px;
+                        height:70px;
+                        object-fit:cover;
+                        border-radius:8px;
+                        background:#eee;
+                    "
+                >
 
-                <div class="invoice-product-info">
+
+                <div class="flex-grow-1">
 
                     <strong>
                         ${item.name || "Produk"}
                     </strong>
 
-                    <div class="text-secondary small">
+                    <br>
+
+                    <small class="text-secondary">
 
                         Ukuran:
                         ${item.size || "-"}
@@ -192,19 +156,12 @@ function loadInvoice() {
                         Jumlah:
                         ${quantity}
 
-                    </div>
-
-                    <div class="small mt-1">
-
-                        ${formatRupiah(price)}
-                        / item
-
-                    </div>
+                    </small>
 
                 </div>
 
 
-                <strong class="invoice-price">
+                <strong>
 
                     ${formatRupiah(itemTotal)}
 
@@ -217,269 +174,446 @@ function loadInvoice() {
     });
 
 
-    // ======================================
-    // TAMPILKAN INVOICE
-    // ======================================
+    container.innerHTML = html;
 
-    invoice.innerHTML = `
 
-        <div class="invoice-card">
-
-
-            <!-- STATUS -->
-
-            <div class="text-center">
-
-                <div class="success-icon">
-
-                    ✓
-
-                </div>
-
-
-                <h1 class="fw-bold">
-
-                    Pesanan Berhasil!
-
-                </h1>
-
-
-                <p class="text-secondary">
-
-                    Terima kasih telah berbelanja
-                    di StyleHub.
-
-                </p>
-
-            </div>
-
-
-            <hr>
-
-
-            <!-- INFO ORDER -->
-
-            <div class="row mb-4">
-
-                <div class="col-md-6 mb-3">
-
-                    <small class="text-secondary">
-                        Nomor Pesanan
-                    </small>
-
-                    <h5 class="fw-bold">
-
-                        ${order.orderId || "-"}
-
-                    </h5>
-
-                </div>
-
-
-                <div class="col-md-6 mb-3">
-
-                    <small class="text-secondary">
-                        Tanggal
-                    </small>
-
-                    <h5 class="fw-bold">
-
-                        ${order.date || "-"}
-
-                    </h5>
-
-                </div>
-
-            </div>
-
-
-            <hr>
-
-
-            <!-- CUSTOMER -->
-
-            <h5 class="fw-bold mb-3">
-
-                Informasi Pengiriman
-
-            </h5>
-
-
-            <div class="mb-2">
-
-                <strong>
-                    ${customer.name || "-"}
-                </strong>
-
-            </div>
-
-
-            <div class="mb-2">
-
-                📱
-                ${customer.phone || "-"}
-
-            </div>
-
-
-            <div class="mb-4">
-
-                📍
-                ${customer.address || "-"}
-
-            </div>
-
-
-            <hr>
-
-
-            <!-- PRODUK -->
-
-            <h5 class="fw-bold mb-3">
-
-                Detail Produk
-
-            </h5>
-
-
-            <div>
-
-                ${productsHTML}
-
-            </div>
-
-
-            <hr>
-
-
-            <!-- TOTAL -->
-
-            <div class="d-flex justify-content-between mb-2">
-
-                <span>
-                    Subtotal
-                </span>
-
-                <strong>
-
-                    ${formatRupiah(
-                        order.subtotal
-                    )}
-
-                </strong>
-
-            </div>
-
-
-            <div class="d-flex justify-content-between mb-2">
-
-                <span>
-                    Ongkir
-                </span>
-
-                <strong>
-
-                    ${formatRupiah(
-                        order.shipping
-                    )}
-
-                </strong>
-
-            </div>
-
-
-            <div class="d-flex justify-content-between mb-2">
-
-                <span>
-                    Pembayaran
-                </span>
-
-                <strong>
-
-                    ${order.payment || "-"}
-
-                </strong>
-
-            </div>
-
-
-            <hr>
-
-
-            <div class="d-flex justify-content-between fs-4">
-
-                <strong>
-                    Total
-                </strong>
-
-                <strong>
-
-                    ${formatRupiah(
-                        order.total
-                    )}
-
-                </strong>
-
-            </div>
-
-
-            <!-- STATUS -->
-
-            <div class="alert alert-success mt-4">
-
-                <strong>
-                    ✓ Pembayaran berhasil!
-                </strong>
-
-                <br>
-
-                Pesanan
-                <strong>
-                    ${order.orderId || "-"}
-                </strong>
-
-                sedang diproses.
-
-            </div>
-
-
-            <!-- BUTTON -->
-
-            <div class="d-flex gap-2 flex-wrap mt-4">
-
-                <a
-                    href="products.html"
-                    class="btn btn-dark">
-
-                    Belanja Lagi
-
-                </a>
-
-
-                <button
-                    type="button"
-                    onclick="window.print()"
-                    class="btn btn-outline-dark">
-
-                    🖨️ Cetak Invoice
-
-                </button>
-
-            </div>
-
-
-        </div>
-
-    `;
+    updateTotal(subtotal);
 
 }
 
 
 // ==========================================
-// JALANKAN SAAT HALAMAN DIBUKA
+// UPDATE TOTAL
+// ==========================================
+
+function updateTotal(subtotal = null) {
+
+    if (subtotal === null) {
+
+        const cart = getCart();
+
+        subtotal = 0;
+
+
+        cart.forEach(function(item) {
+
+            subtotal +=
+                Number(item.price) *
+                Number(item.quantity);
+
+        });
+
+    }
+
+
+    const shippingElement =
+        document.getElementById("shipping");
+
+
+    const shipping =
+        shippingElement
+            ? Number(shippingElement.value)
+            : 15000;
+
+
+    const subtotalElement =
+        document.getElementById("subtotal");
+
+
+    const shippingElementPrice =
+        document.getElementById("shippingPrice");
+
+
+    const totalElement =
+        document.getElementById("total");
+
+
+    if (subtotalElement) {
+
+        subtotalElement.textContent =
+            formatRupiah(subtotal);
+
+    }
+
+
+    if (shippingElementPrice) {
+
+        shippingElementPrice.textContent =
+            formatRupiah(shipping);
+
+    }
+
+
+    if (totalElement) {
+
+        totalElement.textContent =
+            formatRupiah(
+                subtotal + shipping
+            );
+
+    }
+
+}
+
+
+// ==========================================
+// GANTI ONGKIR
+// ==========================================
+
+function updateShipping() {
+
+    updateTotal();
+
+}
+
+
+// ==========================================
+// BUAT PESANAN
+// ==========================================
+
+function createOrder() {
+
+    console.log(
+        "✅ CREATE ORDER DIJALANKAN"
+    );
+
+
+    // ======================================
+    // AMBIL CART
+    // ======================================
+
+    const cart = getCart();
+
+
+    if (cart.length === 0) {
+
+        alert(
+            "Keranjang kamu masih kosong!"
+        );
+
+        return;
+
+    }
+
+
+    // ======================================
+    // AMBIL ELEMENT
+    // ======================================
+
+    const nameElement =
+        document.getElementById(
+            "customerName"
+        );
+
+
+    const phoneElement =
+        document.getElementById(
+            "customerPhone"
+        );
+
+
+    const addressElement =
+        document.getElementById(
+            "customerAddress"
+        );
+
+
+    const shippingElement =
+        document.getElementById(
+            "shipping"
+        );
+
+
+    const paymentElement =
+        document.getElementById(
+            "payment"
+        );
+
+
+    // ======================================
+    // CEK ELEMENT
+    // ======================================
+
+    if (
+        !nameElement ||
+        !phoneElement ||
+        !addressElement ||
+        !shippingElement ||
+        !paymentElement
+    ) {
+
+        alert(
+            "Form checkout tidak ditemukan!"
+        );
+
+        return;
+
+    }
+
+
+    // ======================================
+    // AMBIL VALUE
+    // ======================================
+
+    const name =
+        nameElement.value.trim();
+
+
+    const phone =
+        phoneElement.value.trim();
+
+
+    const address =
+        addressElement.value.trim();
+
+
+    const shipping =
+        Number(
+            shippingElement.value
+        ) || 15000;
+
+
+    const payment =
+        paymentElement.value;
+
+
+    // ======================================
+    // VALIDASI
+    // ======================================
+
+    if (name === "") {
+
+        alert(
+            "Nama penerima belum diisi!"
+        );
+
+        nameElement.focus();
+
+        return;
+
+    }
+
+
+    if (phone === "") {
+
+        alert(
+            "Nomor HP belum diisi!"
+        );
+
+        phoneElement.focus();
+
+        return;
+
+    }
+
+
+    if (address === "") {
+
+        alert(
+            "Alamat belum diisi!"
+        );
+
+        addressElement.focus();
+
+        return;
+
+    }
+
+
+    if (payment === "") {
+
+        alert(
+            "Silakan pilih metode pembayaran!"
+        );
+
+        paymentElement.focus();
+
+        return;
+
+    }
+
+
+    // ======================================
+    // HITUNG SUBTOTAL
+    // ======================================
+
+    let subtotal = 0;
+
+
+    cart.forEach(function(item) {
+
+        subtotal +=
+            Number(item.price) *
+            Number(item.quantity);
+
+    });
+
+
+    // ======================================
+    // HITUNG TOTAL
+    // ======================================
+
+    const total =
+        subtotal + shipping;
+
+
+    // ======================================
+    // NOMOR PESANAN
+    // ======================================
+
+    const orderId =
+        "SH-" +
+        Date.now();
+
+
+    // ======================================
+    // TANGGAL
+    // ======================================
+
+    const date =
+        new Date().toLocaleString(
+            "id-ID",
+            {
+                dateStyle: "long",
+                timeStyle: "short"
+            }
+        );
+
+
+    // ======================================
+    // BUAT OBJECT ORDER
+    // ======================================
+
+    const order = {
+
+        orderId: orderId,
+
+        date: date,
+
+        customer: {
+
+            name: name,
+
+            phone: phone,
+
+            address: address
+
+        },
+
+        items: cart,
+
+        subtotal: subtotal,
+
+        shipping: shipping,
+
+        payment: payment,
+
+        total: total
+
+    };
+
+
+    // ======================================
+    // SIMPAN ORDER
+    // ======================================
+
+    try {
+
+        localStorage.setItem(
+            "lastOrder",
+            JSON.stringify(order)
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Gagal menyimpan order:",
+            error
+        );
+
+        alert(
+            "Pesanan gagal disimpan!"
+        );
+
+        return;
+
+    }
+
+
+    // ======================================
+    // KOSONGKAN CART
+    // ======================================
+
+    localStorage.removeItem("cart");
+
+
+    // ======================================
+    // REDIRECT INVOICE
+    // ======================================
+
+    console.log(
+        "✅ Order berhasil dibuat:",
+        order
+    );
+
+
+    window.location.href =
+        "invoice.html";
+
+}
+
+
+// ==========================================
+// SAAT HALAMAN DIBUKA
 // ==========================================
 
 document.addEventListener(
     "DOMContentLoaded",
-    loadInvoice
+    function() {
+
+        // Tampilkan produk
+
+        displayCheckout();
+
+
+        // ==================================
+        // EVENT ONGKIR
+        // ==================================
+
+        const shipping =
+            document.getElementById(
+                "shipping"
+            );
+
+
+        if (shipping) {
+
+            shipping.addEventListener(
+                "change",
+                updateShipping
+            );
+
+        }
+
+
+        // ==================================
+        // TOMBOL BAYAR
+        // ==================================
+
+        const payButton =
+            document.getElementById(
+                "payButton"
+            );
+
+
+        if (payButton) {
+
+            payButton.addEventListener(
+                "click",
+                createOrder
+            );
+
+        }
+
+    }
 );
