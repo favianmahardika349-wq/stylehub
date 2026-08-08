@@ -1,11 +1,6 @@
-// ==========================================
-// STYLEHUB - CART.JS
-// ==========================================
-
-
-// ==========================================
-// AMBIL DATA CART DARI LOCAL STORAGE
-// ==========================================
+// ===============================
+// CART
+// ===============================
 
 function getCart() {
 
@@ -16,9 +11,9 @@ function getCart() {
 }
 
 
-// ==========================================
+// ===============================
 // SIMPAN CART
-// ==========================================
+// ===============================
 
 function saveCart(cart) {
 
@@ -30,11 +25,11 @@ function saveCart(cart) {
 }
 
 
-// ==========================================
-// FORMAT RUPIAH
-// ==========================================
+// ===============================
+// RUPIAH
+// ===============================
 
-function formatRupiah(number) {
+function rupiah(number) {
 
     return new Intl.NumberFormat(
         "id-ID",
@@ -48,44 +43,9 @@ function formatRupiah(number) {
 }
 
 
-// ==========================================
-// UPDATE JUMLAH CART DI NAVBAR
-// ==========================================
-
-function updateCartCount() {
-
-    const cart = getCart();
-
-
-    const total = cart.reduce(
-        (sum, item) => {
-
-            return sum +
-                Number(item.quantity);
-
-        },
-        0
-    );
-
-
-    const badge =
-        document.getElementById(
-            "cartCount"
-        );
-
-
-    if (badge) {
-
-        badge.textContent = total;
-
-    }
-
-}
-
-
-// ==========================================
+// ===============================
 // TAMPILKAN CART
-// ==========================================
+// ===============================
 
 function displayCart() {
 
@@ -94,59 +54,35 @@ function displayCart() {
             "cartContainer"
         );
 
-
     if (!container) return;
 
 
     const cart = getCart();
 
 
-    // ======================================
     // CART KOSONG
-    // ======================================
 
     if (cart.length === 0) {
 
         container.innerHTML = `
 
-            <div
-                class="empty-cart"
-                style="
-                    background:white;
-                    padding:70px 20px;
-                    border-radius:20px;
-                    text-align:center;
-                "
-            >
+            <div class="text-center bg-white p-5 rounded-4">
 
-                <div
-                    style="
-                        font-size:60px;
-                        margin-bottom:15px;
-                    "
-                >
+                <div style="font-size:60px">
                     🛒
                 </div>
 
-
-                <h2 class="fw-bold">
-
+                <h2 class="fw-bold mt-3">
                     Keranjang Kosong
-
                 </h2>
 
-
                 <p class="text-secondary">
-
-                    Belum ada produk yang kamu pilih.
-
+                    Belum ada produk di keranjang.
                 </p>
-
 
                 <a
                     href="products.html"
-                    class="btn btn-dark mt-2"
-                >
+                    class="btn btn-dark">
 
                     Mulai Belanja
 
@@ -156,58 +92,38 @@ function displayCart() {
 
         `;
 
-        updateCartCount();
-
         return;
 
     }
 
 
-    // ======================================
-    // HITUNG SUBTOTAL
-    // ======================================
-
     let subtotal = 0;
 
-
-    // ======================================
-    // HTML AWAL
-    // ======================================
 
     let html = `
 
         <div class="row g-4">
-
-
-            <!-- ========================= -->
-            <!-- DAFTAR PRODUK -->
-            <!-- ========================= -->
 
             <div class="col-lg-8">
 
     `;
 
 
-    // ======================================
-    // LOOP PRODUK
-    // ======================================
+    // PRODUK
 
-    cart.forEach(item => {
-
+    cart.forEach(function(item) {
 
         const price =
             Number(item.price);
 
-
         const quantity =
             Number(item.quantity);
 
-
-        const itemTotal =
+        const totalItem =
             price * quantity;
 
 
-        subtotal += itemTotal;
+        subtotal += totalItem;
 
 
         html += `
@@ -215,27 +131,14 @@ function displayCart() {
             <div class="cart-product">
 
 
-                <!-- ===================== -->
-                <!-- GAMBAR PRODUK -->
-                <!-- ===================== -->
-
                 <img
-
                     src="${item.image}"
-
-                    alt="${item.name}"
-
                     class="cart-product-image"
-
+                    alt="${item.name}"
                 >
 
 
-                <!-- ===================== -->
-                <!-- INFORMASI PRODUK -->
-                <!-- ===================== -->
-
                 <div class="cart-product-info">
-
 
                     <h6 class="fw-bold mb-1">
 
@@ -244,45 +147,30 @@ function displayCart() {
                     </h6>
 
 
-                    <small
-                        class="text-secondary"
-                    >
+                    <small class="text-secondary">
 
-                        Ukuran:
-                        ${item.size}
+                        Ukuran: ${item.size}
 
                     </small>
 
 
                     <div class="fw-bold mt-1">
 
-                        ${formatRupiah(price)}
+                        ${rupiah(price)}
 
                     </div>
 
 
-                    <!-- ================= -->
-                    <!-- JUMLAH PRODUK -->
-                    <!-- ================= -->
-
-                    <div
-                        class="quantity-control mt-2"
-                    >
-
+                    <div class="quantity-control mt-2">
 
                         <button
-
-                            type="button"
-
                             onclick="
                                 changeQuantity(
                                     ${item.id},
                                     '${item.size}',
                                     -1
                                 )
-                            "
-
-                        >
+                            ">
 
                             −
 
@@ -297,39 +185,28 @@ function displayCart() {
 
 
                         <button
-
-                            type="button"
-
                             onclick="
                                 changeQuantity(
                                     ${item.id},
                                     '${item.size}',
                                     1
                                 )
-                            "
-
-                        >
+                            ">
 
                             +
 
                         </button>
-
 
                     </div>
 
                 </div>
 
 
-                <!-- ===================== -->
-                <!-- TOTAL PRODUK -->
-                <!-- ===================== -->
-
                 <div class="text-end">
-
 
                     <strong>
 
-                        ${formatRupiah(itemTotal)}
+                        ${rupiah(totalItem)}
 
                     </strong>
 
@@ -338,32 +215,19 @@ function displayCart() {
 
 
                     <button
-
-                        type="button"
-
                         onclick="
                             removeCart(
                                 ${item.id},
                                 '${item.size}'
                             )
                         "
-
-                        class="
-                            btn
-                            btn-sm
-                            btn-outline-danger
-                            mt-2
-                        "
-
-                    >
+                        class="btn btn-sm btn-outline-danger mt-2">
 
                         Hapus
 
                     </button>
 
-
                 </div>
-
 
             </div>
 
@@ -372,96 +236,51 @@ function displayCart() {
     });
 
 
-    // ======================================
-    // ONGKIR
-    // ======================================
-
     const shipping = 15000;
 
-
-    // ======================================
-    // TOTAL
-    // ======================================
-
-    const total =
+    const grandTotal =
         subtotal + shipping;
 
 
-    // ======================================
     // SUMMARY
-    // ======================================
 
     html += `
 
             </div>
 
 
-            <!-- ========================= -->
-            <!-- RINGKASAN PESANAN -->
-            <!-- ========================= -->
-
             <div class="col-lg-4">
-
 
                 <div class="summary-card">
 
-
                     <h4 class="fw-bold">
-
-                        Ringkasan Pesanan
-
+                        Ringkasan
                     </h4>
 
-
                     <hr>
 
 
-                    <!-- SUBTOTAL -->
-
-                    <div
-                        class="
-                            d-flex
-                            justify-content-between
-                        "
-                    >
+                    <div class="d-flex justify-content-between">
 
                         <span>
-
                             Subtotal
-
                         </span>
 
-
                         <strong>
-
-                            ${formatRupiah(subtotal)}
-
+                            ${rupiah(subtotal)}
                         </strong>
 
                     </div>
 
 
-                    <!-- ONGKIR -->
-
-                    <div
-                        class="
-                            d-flex
-                            justify-content-between
-                            mt-2
-                        "
-                    >
+                    <div class="d-flex justify-content-between mt-2">
 
                         <span>
-
                             Ongkir
-
                         </span>
 
-
                         <strong>
-
-                            ${formatRupiah(shipping)}
-
+                            ${rupiah(shipping)}
                         </strong>
 
                     </div>
@@ -470,82 +289,44 @@ function displayCart() {
                     <hr>
 
 
-                    <!-- TOTAL -->
-
-                    <div
-                        class="
-                            d-flex
-                            justify-content-between
-                            fs-5
-                        "
-                    >
+                    <div class="d-flex justify-content-between fs-5">
 
                         <strong>
-
                             Total
-
                         </strong>
 
-
                         <strong>
-
-                            ${formatRupiah(total)}
-
+                            ${rupiah(grandTotal)}
                         </strong>
 
                     </div>
 
-
-                    <!-- CHECKOUT -->
 
                     <a
-
                         href="checkout.html"
-
-                        class="
-                            btn
-                            btn-dark
-                            w-100
-                            mt-4
-                        "
-
-                    >
+                        class="btn btn-dark w-100 mt-4">
 
                         Checkout
 
                     </a>
 
-
                 </div>
 
-
             </div>
-
 
         </div>
 
     `;
 
 
-    // ======================================
-    // MASUKKAN KE HTML
-    // ======================================
-
     container.innerHTML = html;
-
-
-    // ======================================
-    // UPDATE BADGE CART
-    // ======================================
-
-    updateCartCount();
 
 }
 
 
-// ==========================================
-// UBAH JUMLAH PRODUK
-// ==========================================
+// ===============================
+// UBAH JUMLAH
+// ===============================
 
 function changeQuantity(
     id,
@@ -553,133 +334,84 @@ function changeQuantity(
     change
 ) {
 
-
     let cart = getCart();
 
 
-    // Cari produk berdasarkan ID + ukuran
+    const item = cart.find(function(item) {
 
-    const item =
-        cart.find(
-            product =>
+        return Number(item.id) === Number(id)
+            && item.size === size;
 
-                Number(product.id) ===
-                Number(id)
-
-                &&
-
-                product.size === size
-        );
+    });
 
 
     if (!item) return;
 
-
-    // Ubah jumlah
 
     item.quantity =
         Number(item.quantity) +
         Number(change);
 
 
-    // ======================================
-    // JIKA JUMLAH 0 → HAPUS PRODUK
-    // ======================================
-
     if (item.quantity <= 0) {
 
-        cart =
-            cart.filter(
-                product =>
+        cart = cart.filter(function(item) {
 
-                    !(
-                        Number(product.id) ===
-                        Number(id)
-
-                        &&
-
-                        product.size ===
-                        size
-                    )
+            return !(
+                Number(item.id) === Number(id)
+                && item.size === size
             );
+
+        });
 
     }
 
 
-    // Simpan
-
     saveCart(cart);
 
-
-    // Tampilkan ulang
-
     displayCart();
-
-
-    // Update badge
-
-    updateCartCount();
 
 }
 
 
-// ==========================================
-// HAPUS PRODUK
-// ==========================================
+// ===============================
+// HAPUS
+// ===============================
 
 function removeCart(
     id,
     size
 ) {
 
-
     let cart = getCart();
 
 
-    cart =
-        cart.filter(
-            item =>
+    cart = cart.filter(function(item) {
 
-                !(
-                    Number(item.id) ===
-                    Number(id)
-
-                    &&
-
-                    item.size ===
-                    size
-                )
+        return !(
+            Number(item.id) === Number(id)
+            && item.size === size
         );
 
+    });
 
-    // Simpan cart baru
 
     saveCart(cart);
 
-
-    // Tampilkan ulang
-
     displayCart();
-
-
-    // Update badge
-
-    updateCartCount();
 
 }
 
 
-// ==========================================
-// JALANKAN SAAT HALAMAN SELESAI DIMUAT
-// ==========================================
+// ===============================
+// JALANKAN
+// ===============================
 
 document.addEventListener(
     "DOMContentLoaded",
-    function () {
+    function() {
 
         displayCart();
-
-        updateCartCount();
 
     }
 );
