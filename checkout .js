@@ -1,5 +1,5 @@
 // ==========================================
-// STYLEHUB - CHECKOUT.JS FINAL
+// STYLEHUB - INVOICE
 // ==========================================
 
 
@@ -10,68 +10,73 @@
 function formatRupiah(number) {
 
     return new Intl.NumberFormat("id-ID", {
+
         style: "currency",
+
         currency: "IDR",
+
         maximumFractionDigits: 0
-    }).format(number);
+
+    }).format(Number(number) || 0);
 
 }
 
 
 // ==========================================
-// AMBIL CART
+// LOAD INVOICE
 // ==========================================
 
-function getCart() {
+function loadInvoice() {
 
-    try {
+    const invoice =
+        document.getElementById("invoice");
 
-        return JSON.parse(
-            localStorage.getItem("cart")
-        ) || [];
 
-    } catch (error) {
+    if (!invoice) {
 
-        console.error("Cart error:", error);
-
-        return [];
+        return;
 
     }
 
-}
+
+    // Ambil pesanan terakhir
+
+    const savedOrder =
+        localStorage.getItem("lastOrder");
 
 
-// ==========================================
-// TAMPILKAN CHECKOUT
-// ==========================================
+    // ======================================
+    // JIKA BELUM ADA PESANAN
+    // ======================================
 
-function displayCheckout() {
+    if (!savedOrder) {
 
-    const container =
-        document.getElementById("checkoutItems");
+        invoice.innerHTML = `
 
-    if (!container) return;
+            <div class="invoice-card text-center">
 
+                <div style="font-size:70px;">
+                    📄
+                </div>
 
-    const cart = getCart();
+                <h2 class="fw-bold mt-3">
+                    Invoice Tidak Ditemukan
+                </h2>
 
-
-    if (cart.length === 0) {
-
-        container.innerHTML = `
-            <div class="text-center py-4">
-
-                <h5>Keranjang kosong</h5>
+                <p class="text-secondary">
+                    Belum ada pesanan yang dibuat.
+                </p>
 
                 <a
                     href="products.html"
-                    class="btn btn-dark mt-2">
+                    class="btn btn-dark">
 
-                    Belanja Sekarang
+                    Mulai Belanja
 
                 </a>
 
             </div>
+
         `;
 
         return;
@@ -79,453 +84,402 @@ function displayCheckout() {
     }
 
 
-    let subtotal = 0;
+    // ======================================
+    // BACA DATA ORDER
+    // ======================================
 
-    let html = "";
+    let order;
 
 
-    cart.forEach(item => {
+    try {
+
+        order =
+            JSON.parse(savedOrder);
+
+    } catch (error) {
+
+        console.error(
+            "Invoice error:",
+            error
+        );
+
+
+        invoice.innerHTML = `
+
+            <div class="invoice-card text-center">
+
+                <h2 class="fw-bold">
+                    Data Invoice Rusak
+                </h2>
+
+                <p class="text-secondary">
+                    Silakan buat pesanan baru.
+                </p>
+
+                <a
+                    href="products.html"
+                    class="btn btn-dark">
+
+                    Belanja Lagi
+
+                </a>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    // ======================================
+    // DATA CUSTOMER
+    // ======================================
+
+    const customer =
+        order.customer || {};
+
+
+    const items =
+        Array.isArray(order.items)
+            ? order.items
+            : [];
+
+
+    // ======================================
+    // PRODUK
+    // ======================================
+
+    let productsHTML = "";
+
+
+    items.forEach(function(item) {
 
         const price =
             Number(item.price) || 0;
 
+
         const quantity =
             Number(item.quantity) || 1;
+
 
         const itemTotal =
             price * quantity;
 
 
-        subtotal += itemTotal;
+        productsHTML += `
 
-
-        html += `
-            <div
-                class="d-flex align-items-center mb-3"
-                style="gap:12px;"
-            >
+            <div class="invoice-product">
 
                 <img
-                    src="${item.image}"
-                    alt="${item.name}"
-                    style="
-                        width:60px;
-                        height:70px;
-                        object-fit:cover;
-                        border-radius:8px;
-                        background:#eee;
-                    "
-                >
+                    src="${item.image || ""}"
+                    alt="${item.name || "Produk"}">
 
-                <div class="flex-grow-1">
+                <div class="invoice-product-info">
 
                     <strong>
-                        ${item.name}
+                        ${item.name || "Produk"}
                     </strong>
 
-                    <br>
+                    <div class="text-secondary small">
 
-                    <small class="text-secondary">
+                        Ukuran:
+                        ${item.size || "-"}
 
-                        Ukuran: ${item.size}
                         <br>
-                        Qty: ${quantity}
 
-                    </small>
+                        Jumlah:
+                        ${quantity}
+
+                    </div>
+
+                    <div class="small mt-1">
+
+                        ${formatRupiah(price)}
+                        / item
+
+                    </div>
 
                 </div>
 
-                <strong>
+
+                <strong class="invoice-price">
 
                     ${formatRupiah(itemTotal)}
 
                 </strong>
 
             </div>
+
         `;
 
     });
 
 
-    container.innerHTML = html;
+    // ======================================
+    // TAMPILKAN INVOICE
+    // ======================================
+
+    invoice.innerHTML = `
+
+        <div class="invoice-card">
 
 
-    updateTotal(subtotal);
+            <!-- STATUS -->
+
+            <div class="text-center">
+
+                <div class="success-icon">
+
+                    ✓
+
+                </div>
+
+
+                <h1 class="fw-bold">
+
+                    Pesanan Berhasil!
+
+                </h1>
+
+
+                <p class="text-secondary">
+
+                    Terima kasih telah berbelanja
+                    di StyleHub.
+
+                </p>
+
+            </div>
+
+
+            <hr>
+
+
+            <!-- INFO ORDER -->
+
+            <div class="row mb-4">
+
+                <div class="col-md-6 mb-3">
+
+                    <small class="text-secondary">
+                        Nomor Pesanan
+                    </small>
+
+                    <h5 class="fw-bold">
+
+                        ${order.orderId || "-"}
+
+                    </h5>
+
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+
+                    <small class="text-secondary">
+                        Tanggal
+                    </small>
+
+                    <h5 class="fw-bold">
+
+                        ${order.date || "-"}
+
+                    </h5>
+
+                </div>
+
+            </div>
+
+
+            <hr>
+
+
+            <!-- CUSTOMER -->
+
+            <h5 class="fw-bold mb-3">
+
+                Informasi Pengiriman
+
+            </h5>
+
+
+            <div class="mb-2">
+
+                <strong>
+                    ${customer.name || "-"}
+                </strong>
+
+            </div>
+
+
+            <div class="mb-2">
+
+                📱
+                ${customer.phone || "-"}
+
+            </div>
+
+
+            <div class="mb-4">
+
+                📍
+                ${customer.address || "-"}
+
+            </div>
+
+
+            <hr>
+
+
+            <!-- PRODUK -->
+
+            <h5 class="fw-bold mb-3">
+
+                Detail Produk
+
+            </h5>
+
+
+            <div>
+
+                ${productsHTML}
+
+            </div>
+
+
+            <hr>
+
+
+            <!-- TOTAL -->
+
+            <div class="d-flex justify-content-between mb-2">
+
+                <span>
+                    Subtotal
+                </span>
+
+                <strong>
+
+                    ${formatRupiah(
+                        order.subtotal
+                    )}
+
+                </strong>
+
+            </div>
+
+
+            <div class="d-flex justify-content-between mb-2">
+
+                <span>
+                    Ongkir
+                </span>
+
+                <strong>
+
+                    ${formatRupiah(
+                        order.shipping
+                    )}
+
+                </strong>
+
+            </div>
+
+
+            <div class="d-flex justify-content-between mb-2">
+
+                <span>
+                    Pembayaran
+                </span>
+
+                <strong>
+
+                    ${order.payment || "-"}
+
+                </strong>
+
+            </div>
+
+
+            <hr>
+
+
+            <div class="d-flex justify-content-between fs-4">
+
+                <strong>
+                    Total
+                </strong>
+
+                <strong>
+
+                    ${formatRupiah(
+                        order.total
+                    )}
+
+                </strong>
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div class="alert alert-success mt-4">
+
+                <strong>
+                    ✓ Pembayaran berhasil!
+                </strong>
+
+                <br>
+
+                Pesanan
+                <strong>
+                    ${order.orderId || "-"}
+                </strong>
+
+                sedang diproses.
+
+            </div>
+
+
+            <!-- BUTTON -->
+
+            <div class="d-flex gap-2 flex-wrap mt-4">
+
+                <a
+                    href="products.html"
+                    class="btn btn-dark">
+
+                    Belanja Lagi
+
+                </a>
+
+
+                <button
+                    type="button"
+                    onclick="window.print()"
+                    class="btn btn-outline-dark">
+
+                    🖨️ Cetak Invoice
+
+                </button>
+
+            </div>
+
+
+        </div>
+
+    `;
 
 }
 
 
 // ==========================================
-// UPDATE TOTAL
-// ==========================================
-
-function updateTotal(subtotal = null) {
-
-    if (subtotal === null) {
-
-        const cart = getCart();
-
-        subtotal = 0;
-
-        cart.forEach(item => {
-
-            subtotal +=
-                Number(item.price) *
-                Number(item.quantity);
-
-        });
-
-    }
-
-
-    const shippingElement =
-        document.getElementById("shipping");
-
-
-    const shipping =
-        shippingElement
-            ? Number(shippingElement.value)
-            : 15000;
-
-
-    const subtotalElement =
-        document.getElementById("subtotal");
-
-
-    const shippingPriceElement =
-        document.getElementById("shippingPrice");
-
-
-    const totalElement =
-        document.getElementById("total");
-
-
-    if (subtotalElement) {
-
-        subtotalElement.textContent =
-            formatRupiah(subtotal);
-
-    }
-
-
-    if (shippingPriceElement) {
-
-        shippingPriceElement.textContent =
-            formatRupiah(shipping);
-
-    }
-
-
-    if (totalElement) {
-
-        totalElement.textContent =
-            formatRupiah(
-                subtotal + shipping
-            );
-
-    }
-
-}
-
-
-// ==========================================
-// GANTI ONGKIR
-// ==========================================
-
-function updateShipping() {
-
-    updateTotal();
-
-}
-
-
-// ==========================================
-// BUAT PESANAN
-// ==========================================
-
-function createOrder() {
-
-    console.log("BAYAR DIKLIK");
-
-
-    const cart = getCart();
-
-
-    // --------------------------------------
-    // CEK CART
-    // --------------------------------------
-
-    if (cart.length === 0) {
-
-        alert(
-            "Keranjang kamu masih kosong!"
-        );
-
-        return;
-
-    }
-
-
-    // --------------------------------------
-    // AMBIL DATA
-    // --------------------------------------
-
-    const nameElement =
-        document.getElementById(
-            "customerName"
-        );
-
-
-    const phoneElement =
-        document.getElementById(
-            "customerPhone"
-        );
-
-
-    const addressElement =
-        document.getElementById(
-            "customerAddress"
-        );
-
-
-    const shippingElement =
-        document.getElementById(
-            "shipping"
-        );
-
-
-    const paymentElement =
-        document.getElementById(
-            "payment"
-        );
-
-
-    if (
-        !nameElement ||
-        !phoneElement ||
-        !addressElement ||
-        !shippingElement ||
-        !paymentElement
-    ) {
-
-        alert(
-            "Data checkout tidak ditemukan. Cek checkout.html!"
-        );
-
-        return;
-
-    }
-
-
-    const name =
-        nameElement.value.trim();
-
-
-    const phone =
-        phoneElement.value.trim();
-
-
-    const address =
-        addressElement.value.trim();
-
-
-    const shipping =
-        Number(
-            shippingElement.value
-        ) || 15000;
-
-
-    const payment =
-        paymentElement.value;
-
-
-    // --------------------------------------
-    // VALIDASI
-    // --------------------------------------
-
-    if (!name) {
-
-        alert("Nama lengkap belum diisi!");
-
-        nameElement.focus();
-
-        return;
-
-    }
-
-
-    if (!phone) {
-
-        alert("Nomor HP belum diisi!");
-
-        phoneElement.focus();
-
-        return;
-
-    }
-
-
-    if (!address) {
-
-        alert("Alamat belum diisi!");
-
-        addressElement.focus();
-
-        return;
-
-    }
-
-
-    if (!payment) {
-
-        alert("Pilih metode pembayaran!");
-
-        paymentElement.focus();
-
-        return;
-
-    }
-
-
-    // --------------------------------------
-    // HITUNG TOTAL
-    // --------------------------------------
-
-    let subtotal = 0;
-
-
-    cart.forEach(item => {
-
-        subtotal +=
-            Number(item.price) *
-            Number(item.quantity);
-
-    });
-
-
-    const total =
-        subtotal + shipping;
-
-
-    // --------------------------------------
-    // BUAT ORDER ID
-    // --------------------------------------
-
-    const orderId =
-        "SH-" +
-        Date.now();
-
-
-    // --------------------------------------
-    // BUAT DATA ORDER
-    // --------------------------------------
-
-    const order = {
-
-        orderId: orderId,
-
-        date:
-            new Date().toLocaleString(
-                "id-ID",
-                {
-                    dateStyle: "long",
-                    timeStyle: "short"
-                }
-            ),
-
-        customer: {
-
-            name: name,
-
-            phone: phone,
-
-            address: address
-
-        },
-
-        items: cart,
-
-        subtotal: subtotal,
-
-        shipping: shipping,
-
-        payment: payment,
-
-        total: total
-
-    };
-
-
-    // --------------------------------------
-    // SIMPAN ORDER
-    // --------------------------------------
-
-    localStorage.setItem(
-        "lastOrder",
-        JSON.stringify(order)
-    );
-
-
-    // --------------------------------------
-    // KOSONGKAN CART
-    // --------------------------------------
-
-    localStorage.removeItem("cart");
-
-
-    // --------------------------------------
-    // LANGSUNG KE INVOICE
-    // --------------------------------------
-
-    window.location.href =
-        "invoice.html";
-
-}
-
-
-// ==========================================
-// LOAD HALAMAN
+// JALANKAN SAAT HALAMAN DIBUKA
 // ==========================================
 
 document.addEventListener(
     "DOMContentLoaded",
-    function () {
-
-        displayCheckout();
-
-
-        const shipping =
-            document.getElementById(
-                "shipping"
-            );
-
-
-        if (shipping) {
-
-            shipping.addEventListener(
-                "change",
-                updateShipping
-            );
-
-        }
-
-
-        // ==================================
-        // TOMBOL BAYAR
-        // ==================================
-
-        const payButton =
-            document.getElementById(
-                "payButton"
-            );
-
-
-        if (payButton) {
-
-            payButton.onclick =
-                createOrder;
-
-        }
-
-    }
+    loadInvoice
 );
